@@ -303,7 +303,23 @@ void epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
 }
 
 /**
- * @brief 显示字符串（支持自动换行）
+ * @brief 计算字符串宽度（不包含字符间距）
+ */
+static uint16_t calculate_string_width(const char *str, const epd_font_t *font)
+{
+    uint16_t width = 0;
+    const char *p = str;
+    
+    while (*p != '\0' && *p != ' ' && *p != '\n') {
+        width += font->width;
+        p++;
+    }
+    
+    return width;
+}
+
+/**
+ * @brief 显示字符串（支持智能换行，按单词换行）
  * @param canvas 画布对象
  * @param x 起始 X 坐标
  * @param y 起始 Y 坐标
@@ -312,7 +328,7 @@ void epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
  * @param color 颜色
  * @param max_width 最大宽度（像素），0 表示不限制
  * @param max_height 最大高度（像素），0 表示不限制
- * @note 当 max_width>0 时，字符串超出宽度会自动换行
+ * @note 当 max_width>0 时，字符串超出宽度会自动换行（按单词换行，不会切断单词）
  * @note 当 max_height>0 时，超出高度会停止显示
  */
 void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y, 
@@ -322,6 +338,10 @@ void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y,
     uint16_t current_x = x;
     uint16_t current_y = y;
     uint16_t line_height = font->height + 2;  // 行高 = 字体高度 + 2 像素行间距
+    uint16_t char_spacing = 1;  // 字符间距
+    const char *word_start;
+    uint16_t word_width;
+    uint16_t remaining_width;
     
     if (canvas == NULL || font == NULL || str == NULL) {
         return;
@@ -338,6 +358,11 @@ void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y,
     }
     
     while (*str != '\0') {
+        // 检查是否超出下边界
+        if (current_y + font->height > max_height) {
+            break;
+        }
+        
         // 遇到换行符，强制换行
         if (*str == '\n') {
             current_x = x;
@@ -346,25 +371,43 @@ void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y,
             continue;
         }
         
-        // 检查当前字符是否超出右边界
-        if (current_x + font->width > max_width) {
-            // 换行
+        // 遇到空格，显示空格并更新位置
+        if (*str == ' ') {
+            current_x += font->width + char_spacing;
+            str++;
+            continue;
+        }
+        
+        // 找到单词的起始位置
+        word_start = str;
+        
+        // 计算当前单词的宽度（直到空格、换行或字符串结束）
+        word_width = calculate_string_width(str, font);
+        
+        // 计算当前行剩余宽度
+        remaining_width = max_width - current_x;
+        
+        // 智能换行判断：如果单词宽度 > 剩余宽度，则先换行
+        if (word_width > remaining_width && current_x > x) {
+            // 换到下一行
             current_x = x;
             current_y += line_height;
+            
+            // 检查换行后是否超出高度
+            if (current_y + font->height > max_height) {
+                break;
+            }
         }
         
-        // 检查是否超出下边界
-        if (current_y + font->height > max_height) {
-            // 超出显示范围，停止显示
-            break;
+        // 显示单词中的每个字符
+        while (*str != '\0' && *str != ' ' && *str != '\n') {
+            // 显示字符
+            epd_show_char(canvas, current_x, current_y, *str, font, color);
+            
+            // 更新 X 坐标（增加字符间距）
+            current_x += font->width + char_spacing;
+            str++;
         }
-        
-        // 显示字符
-        epd_show_char(canvas, current_x, current_y, *str, font, color);
-        
-        // 更新 X 坐标（增加 1 像素字符间距）
-        current_x += font->width + 1;
-        str++;
     }
 }
 
