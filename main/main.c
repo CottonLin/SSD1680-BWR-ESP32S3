@@ -202,6 +202,40 @@ static void font_test(void)
     epd_display(test_buffer, test_buffer);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
+    // 测试自动换行功能
+    ESP_LOGI(TAG, "=== 测试自动换行功能 ===");
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    
+    // 绘制边框
+    epd_draw_rectangle(canvas, 5, 5, 290, 146, EPD_COLOR_BLACK, 0);
+    
+    // 测试 1: 使用 8x16 字体显示长文本（自动换行）
+    font = epd_font_get(EPD_FONT_SIZE_8X16);
+    if (font != NULL) {
+        const char *long_text = "Auto Wrap Test: This is a long text that should automatically wrap to the next line when it exceeds the screen width.";
+        ESP_LOGI(TAG, "测试自动换行：8x16 字体");
+        epd_show_string_wrap(canvas, 10, 10, long_text, font, EPD_COLOR_BLACK, 280, 140);
+    }
+    
+    // 刷新显示
+    epd_display(test_buffer, test_buffer);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    
+    // 测试 2: 使用 6x8 字体显示多段落文本
+    ESP_LOGI(TAG, "=== 测试多段落文本 ===");
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    
+    font = epd_font_get(EPD_FONT_SIZE_6X8);
+    if (font != NULL) {
+        const char *multi_para_text = "Paragraph 1:\nThis is the first paragraph.\n\nParagraph 2:\nThis is the second paragraph with automatic word wrapping.";
+        ESP_LOGI(TAG, "测试多段落文本：6x8 字体");
+        epd_show_string_wrap(canvas, 10, 10, multi_para_text, font, EPD_COLOR_BLACK, 276, 132);
+    }
+    
+    // 刷新显示
+    epd_display(test_buffer, test_buffer);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    
     // 清理
     epd_canvas_destroy(canvas);
     free(test_buffer);

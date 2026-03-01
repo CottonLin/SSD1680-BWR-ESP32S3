@@ -36,7 +36,7 @@ static inline void coordinate_transform(epd_canvas_t *canvas,
         return;
     }
     
-    *internal_x = user_y;
+    *internal_x = (EPD_WIDTH - 1) - user_y;
     *internal_y = user_x;
 }
 
@@ -303,7 +303,73 @@ void epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
 }
 
 /**
- * @brief 显示字符串
+ * @brief 显示字符串（支持自动换行）
+ * @param canvas 画布对象
+ * @param x 起始 X 坐标
+ * @param y 起始 Y 坐标
+ * @param str 字符串指针
+ * @param font 字体对象指针
+ * @param color 颜色
+ * @param max_width 最大宽度（像素），0 表示不限制
+ * @param max_height 最大高度（像素），0 表示不限制
+ * @note 当 max_width>0 时，字符串超出宽度会自动换行
+ * @note 当 max_height>0 时，超出高度会停止显示
+ */
+void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y, 
+                          const char *str, const epd_font_t *font, uint16_t color,
+                          uint16_t max_width, uint16_t max_height)
+{
+    uint16_t current_x = x;
+    uint16_t current_y = y;
+    uint16_t line_height = font->height + 2;  // 行高 = 字体高度 + 2 像素行间距
+    
+    if (canvas == NULL || font == NULL || str == NULL) {
+        return;
+    }
+    
+    // 如果未指定最大宽度，使用画布右边界
+    if (max_width == 0) {
+        max_width = canvas->width;
+    }
+    
+    // 如果未指定最大高度，使用画布下边界
+    if (max_height == 0) {
+        max_height = canvas->height;
+    }
+    
+    while (*str != '\0') {
+        // 遇到换行符，强制换行
+        if (*str == '\n') {
+            current_x = x;
+            current_y += line_height;
+            str++;
+            continue;
+        }
+        
+        // 检查当前字符是否超出右边界
+        if (current_x + font->width > max_width) {
+            // 换行
+            current_x = x;
+            current_y += line_height;
+        }
+        
+        // 检查是否超出下边界
+        if (current_y + font->height > max_height) {
+            // 超出显示范围，停止显示
+            break;
+        }
+        
+        // 显示字符
+        epd_show_char(canvas, current_x, current_y, *str, font, color);
+        
+        // 更新 X 坐标（增加 1 像素字符间距）
+        current_x += font->width + 1;
+        str++;
+    }
+}
+
+/**
+ * @brief 显示字符串（兼容旧版本，不支持自动换行）
  */
 void epd_show_string(epd_canvas_t *canvas, uint16_t x, uint16_t y, 
                      const char *str, const epd_font_t *font, uint16_t color)

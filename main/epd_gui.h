@@ -128,7 +128,26 @@ void epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
                    char chr, const epd_font_t *font, uint16_t color);
 
 /**
- * @brief 显示字符串
+ * @brief 显示字符串（支持自动换行）
+ * 
+ * @param canvas 画布对象指针
+ * @param x X 坐标（左上角）
+ * @param y Y 坐标（左上角）
+ * @param str 要显示的字符串
+ * @param font 字体对象指针
+ * @param color 颜色
+ * @param max_width 最大宽度（像素），0 表示使用画布右边界
+ * @param max_height 最大高度（像素），0 表示使用画布下边界
+ * @note 当字符串超出 max_width 时会自动换行
+ * @note 当字符串超出 max_height 时会停止显示
+ * @note 支持 '\n' 强制换行符
+ */
+void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y, 
+                          const char *str, const epd_font_t *font, uint16_t color,
+                          uint16_t max_width, uint16_t max_height);
+
+/**
+ * @brief 显示字符串（兼容旧版本，不支持自动换行）
  * 
  * @param canvas 画布对象指针
  * @param x X 坐标（左上角）
