@@ -20,7 +20,8 @@ extern "C" {
  * - 自动转换：用户坐标 → 内部坐标（转置）
  */
 typedef struct {
-    uint8_t *buffer;            /**< 显存缓冲区指针 */
+    uint8_t *buffer_bw;         /**< 黑白显存缓冲区指针 */
+    uint8_t *buffer_red;        /**< 红色显存缓冲区指针 */
     uint16_t width;             /**< 逻辑宽度（用户坐标，296） */
     uint16_t height;            /**< 逻辑高度（用户坐标，152） */
     uint16_t internal_width;    /**< 内部宽度（SSD1680 X 方向，152） */
@@ -34,16 +35,18 @@ typedef struct {
  */
 #define EPD_COLOR_WHITE     0xFF    /**< 白色 */
 #define EPD_COLOR_BLACK     0x00    /**< 黑色 */
+#define EPD_COLOR_RED       0x01    /**< 红色 */
 
 /**
  * @brief 创建画布对象
  * 
- * @param buffer 显存缓冲区（由用户分配，大小为 EPD_BUFFER_SIZE）
+ * @param buffer_bw 黑白显存缓冲区（由用户分配，大小为 EPD_BUFFER_SIZE）
+ * @param buffer_red 红色显存缓冲区（由用户分配，大小为 EPD_BUFFER_SIZE，可为 NULL）
  * @param width 逻辑宽度（用户坐标，通常 296）
  * @param height 逻辑高度（用户坐标，通常 152）
  * @return 画布对象指针，NULL 表示失败
  */
-epd_canvas_t* epd_canvas_create(uint8_t *buffer, uint16_t width, uint16_t height);
+epd_canvas_t* epd_canvas_create(uint8_t *buffer_bw, uint8_t *buffer_red, uint16_t width, uint16_t height);
 
 /**
  * @brief 销毁画布对象

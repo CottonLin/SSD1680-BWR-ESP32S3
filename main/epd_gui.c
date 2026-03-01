@@ -43,12 +43,12 @@ static inline void coordinate_transform(epd_canvas_t *canvas,
 /**
  * @brief 创建画布对象
  */
-epd_canvas_t* epd_canvas_create(uint8_t *buffer, uint16_t width, uint16_t height)
+epd_canvas_t* epd_canvas_create(uint8_t *buffer_bw, uint8_t *buffer_red, uint16_t width, uint16_t height)
 {
     epd_canvas_t *canvas;
     
-    if (buffer == NULL) {
-        ESP_LOGE(TAG, "缓冲区指针为空");
+    if (buffer_bw == NULL) {
+        ESP_LOGE(TAG, "黑白缓冲区指针为空");
         return NULL;
     }
     
@@ -60,7 +60,8 @@ epd_canvas_t* epd_canvas_create(uint8_t *buffer, uint16_t width, uint16_t height
     
     memset(canvas, 0, sizeof(epd_canvas_t));
     
-    canvas->buffer = buffer;
+    canvas->buffer_bw = buffer_bw;
+    canvas->buffer_red = buffer_red;
     canvas->width = width;
     canvas->height = height;
     canvas->internal_width = EPD_WIDTH;
@@ -90,12 +91,19 @@ void epd_canvas_destroy(epd_canvas_t *canvas)
  */
 void epd_canvas_clear(epd_canvas_t *canvas, uint16_t color)
 {
-    if (canvas == NULL || canvas->buffer == NULL) {
+    if (canvas == NULL || canvas->buffer_bw == NULL) {
         ESP_LOGE(TAG, "画布未初始化");
         return;
     }
     
-    memset(canvas->buffer, color, EPD_BUFFER_SIZE);
+    // 清空黑白缓冲区
+    memset(canvas->buffer_bw, color, EPD_BUFFER_SIZE);
+    
+    // 清空红色缓冲区（如果存在）
+    if (canvas->buffer_red != NULL) {
+        memset(canvas->buffer_red, color, EPD_BUFFER_SIZE);
+    }
+    
     ESP_LOGI(TAG, "画布已清空，颜色：0x%02X", color);
 }
 
@@ -108,7 +116,7 @@ void epd_canvas_set_pixel(epd_canvas_t *canvas, uint16_t x, uint16_t y, uint16_t
     uint32_t byte_addr;
     uint8_t bit_mask;
     
-    if (canvas == NULL || canvas->buffer == NULL) {
+    if (canvas == NULL || canvas->buffer_bw == NULL) {
         return;
     }
     
@@ -123,9 +131,25 @@ void epd_canvas_set_pixel(epd_canvas_t *canvas, uint16_t x, uint16_t y, uint16_t
     bit_mask = 0x80 >> (internal_x % 8);
     
     if (color == EPD_COLOR_BLACK) {
-        canvas->buffer[byte_addr] &= ~bit_mask;
+        // 黑白通道：黑色=0，白色=1
+        canvas->buffer_bw[byte_addr] &= ~bit_mask;
+        // 红色通道：保持白色（不显示红色）
+        if (canvas->buffer_red != NULL) {
+            canvas->buffer_red[byte_addr] |= bit_mask;
+        }
+    } else if (color == EPD_COLOR_RED) {
+        // 黑白通道：保持白色（不显示黑色）
+        canvas->buffer_bw[byte_addr] |= bit_mask;
+        // 红色通道：红色=0，白色=1
+        if (canvas->buffer_red != NULL) {
+            canvas->buffer_red[byte_addr] &= ~bit_mask;
+        }
     } else {
-        canvas->buffer[byte_addr] |= bit_mask;
+        // 白色：两个通道都为 1
+        canvas->buffer_bw[byte_addr] |= bit_mask;
+        if (canvas->buffer_red != NULL) {
+            canvas->buffer_red[byte_addr] |= bit_mask;
+        }
     }
 }
 

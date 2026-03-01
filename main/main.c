@@ -76,58 +76,63 @@ static void basic_test(void)
 static void geometry_test(void)
 {
     epd_canvas_t *canvas;
-    uint8_t *test_buffer;
+    uint8_t *test_buffer_bw;
+    uint8_t *test_buffer_red;
     
     ESP_LOGI(TAG, "=== 开始几何图形绘制测试 ===");
     
-    // 创建显存缓冲区
-    test_buffer = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    if (test_buffer == NULL) {
+    // 创建两个显存缓冲区
+    test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
+    test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
+    if (test_buffer_bw == NULL || test_buffer_red == NULL) {
         ESP_LOGE(TAG, "显存分配失败");
         return;
     }
     
-    // 创建画布
-    canvas = epd_canvas_create(test_buffer, 296, 152);
+    // 创建画布（传入两个缓冲区）
+    canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
     if (canvas == NULL) {
         ESP_LOGE(TAG, "画布创建失败");
-        free(test_buffer);
+        free(test_buffer_bw);
+        free(test_buffer_red);
         return;
     }
     
     // 1. 清屏
     ESP_LOGI(TAG, "清屏...");
-    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
-    epd_display(test_buffer, test_buffer);
+    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
+    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
+    epd_display(test_buffer_bw, test_buffer_red);
     
-    // 2. 绘制边框矩形
-    ESP_LOGI(TAG, "绘制边框矩形...");
+    // 2. 绘制边框矩形（黑色）
+    ESP_LOGI(TAG, "绘制边框矩形（黑色）...");
     epd_draw_rectangle(canvas, 0, 0, 295, 151, EPD_COLOR_BLACK, 0);
     
-    // 3. 绘制对角线
-    ESP_LOGI(TAG, "绘制对角线...");
+    // 3. 绘制对角线（黑色）
+    ESP_LOGI(TAG, "绘制对角线（黑色）...");
     epd_draw_line(canvas, 0, 0, 295, 151, EPD_COLOR_BLACK);
     epd_draw_line(canvas, 295, 0, 0, 151, EPD_COLOR_BLACK);
     
-    // 4. 绘制实心矩形
-    ESP_LOGI(TAG, "绘制实心矩形...");
-    epd_draw_rectangle(canvas, 50, 30, 100, 60, EPD_COLOR_BLACK, 1);
+    // 4. 绘制实心矩形（红色）
+    ESP_LOGI(TAG, "绘制实心矩形（红色）...");
+    epd_draw_rectangle(canvas, 50, 30, 100, 60, EPD_COLOR_RED, 1);
     
-    // 5. 绘制空心圆
-    ESP_LOGI(TAG, "绘制空心圆...");
+    // 5. 绘制空心圆（黑色）
+    ESP_LOGI(TAG, "绘制空心圆（黑色）...");
     epd_draw_circle(canvas, 200, 50, 30, EPD_COLOR_BLACK, 0);
     
-    // 6. 绘制实心圆
-    ESP_LOGI(TAG, "绘制实心圆...");
-    epd_draw_circle(canvas, 250, 50, 20, EPD_COLOR_BLACK, 1);
+    // 6. 绘制实心圆（红色）
+    ESP_LOGI(TAG, "绘制实心圆（红色）...");
+    epd_draw_circle(canvas, 250, 50, 20, EPD_COLOR_RED, 1);
     
     // 刷新显示
-    epd_display(test_buffer, test_buffer);
+    epd_display(test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 清理
     epd_canvas_destroy(canvas);
-    free(test_buffer);
+    free(test_buffer_bw);
+    free(test_buffer_red);
     
     ESP_LOGI(TAG, "=== 几何图形绘制测试完成 ===");
 }
@@ -141,29 +146,33 @@ static void font_test(void)
 {
     epd_canvas_t *canvas;
     const epd_font_t *font;
-    uint8_t *test_buffer;
+    uint8_t *test_buffer_bw;
+    uint8_t *test_buffer_red;
     
     ESP_LOGI(TAG, "=== 开始字体显示测试 ===");
     
-    // 创建显存缓冲区
-    test_buffer = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    if (test_buffer == NULL) {
+    // 创建两个显存缓冲区
+    test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
+    test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
+    if (test_buffer_bw == NULL || test_buffer_red == NULL) {
         ESP_LOGE(TAG, "显存分配失败");
         return;
     }
     
-    // 创建画布
-    canvas = epd_canvas_create(test_buffer, 296, 152);
+    // 创建画布（传入两个缓冲区）
+    canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
     if (canvas == NULL) {
         ESP_LOGE(TAG, "画布创建失败");
-        free(test_buffer);
+        free(test_buffer_bw);
+        free(test_buffer_red);
         return;
     }
     
     // 1. 清屏
     ESP_LOGI(TAG, "清屏...");
-    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
-    epd_display(test_buffer, test_buffer);
+    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
+    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
+    epd_display(test_buffer_bw, test_buffer_red);
     
     // 2. 显示不同字号的字体
     ESP_LOGI(TAG, "显示不同字号字体...");
@@ -176,69 +185,72 @@ static void font_test(void)
     
     font = epd_font_get(EPD_FONT_SIZE_6X8);
     if (font != NULL) {
-        ESP_LOGI(TAG, "绘制 6x8 字体在 (10,10): 6x8 Font");
+        ESP_LOGI(TAG, "绘制 6x8 字体在 (10,10): 6x8 Font (黑色)");
         epd_show_string(canvas, 10, 10, "6x8 Font", font, EPD_COLOR_BLACK);
     }
     
     font = epd_font_get(EPD_FONT_SIZE_6X12);
     if (font != NULL) {
-        ESP_LOGI(TAG, "绘制 6x12 字体在 (10,30): 6x12 Font");
-        epd_show_string(canvas, 10, 30, "6x12 Font", font, EPD_COLOR_BLACK);
+        ESP_LOGI(TAG, "绘制 6x12 字体在 (10,30): 6x12 Font (红色)");
+        epd_show_string(canvas, 10, 30, "6x12 Font", font, EPD_COLOR_RED);
     }
 
     font = epd_font_get(EPD_FONT_SIZE_8X16);
     if (font != NULL) {
-        ESP_LOGI(TAG, "绘制 8x16 字体在 (10,55): 8x16 Font");
+        ESP_LOGI(TAG, "绘制 8x16 字体在 (10,55): 8x16 Font (黑色)");
         epd_show_string(canvas, 10, 55, "8x16 Font", font, EPD_COLOR_BLACK);
     }
     
     font = epd_font_get(EPD_FONT_SIZE_12X24);
     if (font != NULL) {
-        ESP_LOGI(TAG, "绘制 12x24 字体在 (10,85): 12x24 Font");
-        epd_show_string(canvas, 10, 85, "12x24 Font", font, EPD_COLOR_BLACK);
+        ESP_LOGI(TAG, "绘制 12x24 字体在 (10,85): 12x24 Font (红色)");
+        epd_show_string(canvas, 10, 85, "12x24 Font", font, EPD_COLOR_RED);
     }
     
     // 刷新显示
-    epd_display(test_buffer, test_buffer);
+    epd_display(test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 测试自动换行功能
     ESP_LOGI(TAG, "=== 测试智能换行功能（按单词换行）===");
-    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
+    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
     
-    // 绘制边框
+    // 绘制边框（黑色）
     epd_draw_rectangle(canvas, 5, 5, 290, 146, EPD_COLOR_BLACK, 0);
     
     // 测试 1: 使用 8x16 字体显示长文本（智能换行，不会切断单词）
     font = epd_font_get(EPD_FONT_SIZE_8X16);
     if (font != NULL) {
         const char *long_text = "Smart Wrap: This intelligent word wrapper will never break a word in the middle. It always keeps complete words together on each line.";
-        ESP_LOGI(TAG, "测试智能换行：8x16 字体");
-        epd_show_string_wrap(canvas, 10, 10, long_text, font, EPD_COLOR_BLACK, 280, 140);
+        ESP_LOGI(TAG, "测试智能换行：8x16 字体 (红色)");
+        epd_show_string_wrap(canvas, 10, 10, long_text, font, EPD_COLOR_RED, 280, 140);
     }
     
     // 刷新显示
-    epd_display(test_buffer, test_buffer);
+    epd_display(test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 测试 2: 使用 6x8 字体显示多段落文本
     ESP_LOGI(TAG, "=== 测试多段落文本 ===");
-    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
+    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
     
     font = epd_font_get(EPD_FONT_SIZE_6X8);
     if (font != NULL) {
         const char *multi_para_text = "Para1:\nThis first paragraph shows smart word wrapping.\n\nPara2:\nVeryLongWordThatShouldNotBreak will stay together.";
-        ESP_LOGI(TAG, "测试多段落文本：6x8 字体");
+        ESP_LOGI(TAG, "测试多段落文本：6x8 字体 (黑色)");
         epd_show_string_wrap(canvas, 10, 10, multi_para_text, font, EPD_COLOR_BLACK, 276, 132);
     }
     
     // 刷新显示
-    epd_display(test_buffer, test_buffer);
+    epd_display(test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 清理
     epd_canvas_destroy(canvas);
-    free(test_buffer);
+    free(test_buffer_bw);
+    free(test_buffer_red);
     
     ESP_LOGI(TAG, "=== 字体显示测试完成 ===");
 }
