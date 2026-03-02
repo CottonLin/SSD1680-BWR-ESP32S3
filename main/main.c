@@ -15,7 +15,8 @@ static const char *TAG = "MAIN";
  */
 #define ENABLE_BASIC_TEST       0   // 1=启用基础测试，0=禁用
 #define ENABLE_GEOMETRY_TEST    0   // 1=启用几何图形测试，0=禁用
-#define ENABLE_FONT_TEST        1   // 1=启用字体测试，0=禁用
+#define ENABLE_FONT_TEST        0   // 1=启用字体测试，0=禁用
+#define ENABLE_UNIT_TEST        1   // 1=启用单元测试，0=禁用
 
 /**
  * @brief 基础显示测试（清屏、图案显示、睡眠）
@@ -261,8 +262,8 @@ void app_main(void)
     esp_err_t ret;
     
     ESP_LOGI(TAG, "SSD1680 测试程序启动");
-    ESP_LOGI(TAG, "配置：BASIC=%d, GEOMETRY=%d, FONT=%d", 
-             ENABLE_BASIC_TEST, ENABLE_GEOMETRY_TEST, ENABLE_FONT_TEST);
+    ESP_LOGI(TAG, "配置：BASIC=%d, GEOMETRY=%d, FONT=%d, UNIT_TEST=%d", 
+             ENABLE_BASIC_TEST, ENABLE_GEOMETRY_TEST, ENABLE_FONT_TEST, ENABLE_UNIT_TEST);
     
     // 1. 初始化显示屏
     ret = epd_init();
@@ -274,7 +275,12 @@ void app_main(void)
     ESP_LOGI(TAG, "显示屏初始化成功");
     
     // 2. 根据配置运行对应测试
-#if ENABLE_BASIC_TEST
+#if ENABLE_UNIT_TEST
+    ESP_LOGI(TAG, "=== 开始运行单元测试 ===");
+    // 单元测试入口（在 epd_tests.c 中定义）
+    extern void unity_run_menu(void);
+    unity_run_menu();
+#elif ENABLE_BASIC_TEST
     basic_test();
 #elif ENABLE_GEOMETRY_TEST
     geometry_test();
