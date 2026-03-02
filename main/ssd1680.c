@@ -4,6 +4,8 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_err.h"
+#include <string.h>
 
 static const char *TAG = "SSD1680";
 
@@ -96,30 +98,28 @@ static esp_err_t epd_spi_init(void)
 }
 
 /**
- * @brief 等待忙信号结束
+ * @brief 等待忙信号结束（BUSY 引脚检测）
  * 
  * 重要说明：
  * 1. SSD1680 的 BUSY 引脚逻辑：
  *    - BUSY=1 (高电平)：SSD1680 正在处理命令/刷新
  *    - BUSY=0 (低电平)：SSD1680 空闲，可以接收新命令
  * 
- * 2. 实际情况：
- *    - 部分 SSD1680 模块的 BUSY 引脚可能未连接（始终高电平）
- *    - 本设计采用固定延时策略，不依赖 BUSY 引脚状态
+ * 2. 检测策略：
+ *    - 循环检测 BUSY 引脚电平
+ *    - BUSY 为低电平时立即返回
+ *    - 不考虑超时问题（由调用方负责）
  * 
- * 3. 延时时间说明：
- *    - 命令接收：50ms（确保 SSD1680 接收到命令）
- *    - 软件复位后：100ms（确保复位完成）
- *    - 显存写入后：50ms（确保数据被接收）
- *    - 刷新命令后：2000-4000ms（墨水屏物理刷新时间）
+ * 3. 看门狗处理：
+ *    - 不喂狗，不禁用
+ *    - 通过配置看门狗超时时间解决（在 menuconfig 中设置为 60 秒）
  */
 void epd_wait_busy(void)
 {
-    const int min_wait = 50;  // 最小等待时间（确保命令被执行）
-    
-    // 固定延时策略：不检测 BUSY，直接等待
-    // 原因：很多 SSD1680 模块的 BUSY 引脚实际未连接
-    vTaskDelay(pdMS_TO_TICKS(min_wait));
+    // 检测 BUSY 引脚，直到低电平
+    while (gpio_get_level(g_epd.pin_busy) == 1) {
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
 }
 
 /**
@@ -228,8 +228,7 @@ esp_err_t epd_init(void)
     
     // 4. 软件复位
     epd_write_cmd(SSD1680_SW_RESET);
-    epd_wait_busy();
-    vTaskDelay(pdMS_TO_TICKS(10));
+    epd_wait_busy();  // 等待复位完成
     
     // 5. 配置显示屏参数
     // 设置 Border 波形
@@ -301,25 +300,29 @@ esp_err_t epd_init(void)
  */
 void epd_update(void)
 {
-    ESP_LOGI(TAG, "发送刷新命令...");
+    uint32_t start_time = esp_log_timestamp();
     
-    // 发送 Display Update Control 2
+    ESP_LOGI(TAG, "=== 开始全屏刷新 ===");
+    ESP_LOGI(TAG, "刷新模式：标准全刷（0xF4）");
+    ESP_LOGI(TAG, "预计耗时：约 30 秒");
+    
+    // 1. 发送 Display Update Control 2
     epd_write_cmd(SSD1680_DISPLAY_UPDATE_CTRL_2);
     epd_write_data(0xF4);  // 0xF4 = 全刷模式（30 秒）
                            // 注意：0xF7 也是 30 秒，无快速效果
     
-    // 发送 Master Activation 启动刷新
+    // 2. 发送 Master Activation 启动刷新
     epd_write_cmd(SSD1680_MASTER_ACTIVATION);
     
-    // 等待一小段时间确保命令被接收
-    vTaskDelay(pdMS_TO_TICKS(50));
+    ESP_LOGI(TAG, "刷新命令已发送，等待完成...");
     
-    // 等待刷新完成
+    // 3. 等待刷新完成（使用 BUSY 引脚检测）
     // SSD1680 全刷模式需要 30 秒（物理特性，无法加速）
-    ESP_LOGI(TAG, "等待屏幕刷新（30 秒全刷模式）...");
-    vTaskDelay(pdMS_TO_TICKS(30000));
+    epd_wait_busy();
     
-    ESP_LOGI(TAG, "屏幕刷新完成");
+    uint32_t elapsed = esp_log_timestamp() - start_time;
+    ESP_LOGI(TAG, "=== 全屏刷新完成 ===");
+    ESP_LOGI(TAG, "实际耗时：%lu.%lu 秒", elapsed / 1000, (elapsed % 1000) / 100);
 }
 
 /**
@@ -332,7 +335,7 @@ void epd_update(void)
  */
 void epd_display(const uint8_t *buffer_bw, const uint8_t *buffer_red)
 {
-    ESP_LOGI(TAG, "开始写入显存数据");
+    ESP_LOGI(TAG, "=== 开始写入显存数据 ===");
     
     // 重要：在写入显存前，必须重新设置 RAM 地址计数器
     // 0x03 模式：从起始位置 (0x00) 开始
@@ -344,16 +347,10 @@ void epd_display(const uint8_t *buffer_bw, const uint8_t *buffer_red)
     epd_write_data(0x00);
     epd_write_data(0x00);
     
-    // 等待命令被接收
-    vTaskDelay(pdMS_TO_TICKS(10));
-    
     // 写入黑白显存 (0x24)
-    ESP_LOGI(TAG, "写入黑白显存 (%d 字节)...", EPD_BUFFER_SIZE);
+    ESP_LOGI(TAG, "写入黑白显存：%d 字节", EPD_BUFFER_SIZE);
     epd_write_cmd(SSD1680_WRITE_RAM_BW);
     epd_write_data_batch(buffer_bw, EPD_BUFFER_SIZE);
-    
-    // 等待数据写入完成
-    vTaskDelay(pdMS_TO_TICKS(50));
     
     // 重新设置 RAM 地址计数器（写入红色显存前也需要）
     epd_write_cmd(SSD1680_SET_RAM_X_ADDRESS_COUNTER);
@@ -363,12 +360,9 @@ void epd_display(const uint8_t *buffer_bw, const uint8_t *buffer_red)
     epd_write_data(0x00);
     epd_write_data(0x00);
     
-    // 等待命令被接收
-    vTaskDelay(pdMS_TO_TICKS(10));
-    
     // 写入红色显存 (0x26)
     // 注意：根据 STM32 原代码，红色显存数据需要取反
-    ESP_LOGI(TAG, "写入红色显存 (%d 字节，取反)...", EPD_BUFFER_SIZE);
+    ESP_LOGI(TAG, "写入红色显存：%d 字节（取反）", EPD_BUFFER_SIZE);
     
     // 创建取反后的缓冲区
     uint8_t *inverted_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
@@ -381,12 +375,12 @@ void epd_display(const uint8_t *buffer_bw, const uint8_t *buffer_red)
         free(inverted_red);
     } else {
         // 如果内存分配失败，直接写入原数据
+        ESP_LOGW(TAG, "内存分配失败，使用原数据");
         epd_write_cmd(SSD1680_WRITE_RAM_RED);
         epd_write_data_batch(buffer_red, EPD_BUFFER_SIZE);
     }
     
-    // 等待数据写入完成
-    vTaskDelay(pdMS_TO_TICKS(50));
+    ESP_LOGI(TAG, "显存数据写入完成");
     
     // 刷新显示
     // 注意：此时 SSD1680 已经在后台开始刷新了
@@ -408,7 +402,9 @@ void epd_clear(void)
     // 填充白色 (0xFF)
     memset(white_buffer, 0xFF, EPD_BUFFER_SIZE);
     
-    ESP_LOGI(TAG, "开始清屏...");
+    ESP_LOGI(TAG, "=== 开始清屏 ===");
+    ESP_LOGI(TAG, "清屏颜色：白色 (0xFF)");
+    ESP_LOGI(TAG, "数据大小：%d 字节", EPD_BUFFER_SIZE);
     
     // 清屏时需要设置 Border 波形为白色
     epd_write_cmd(SSD1680_BORDER_WAVEFORM_CTRL);
@@ -423,7 +419,7 @@ void epd_clear(void)
     
     free(white_buffer);
     
-    ESP_LOGI(TAG, "清屏完成");
+    ESP_LOGI(TAG, "=== 清屏完成 ===");
 }
 
 /**
@@ -438,3 +434,5 @@ void epd_deep_sleep(void)
     
     ESP_LOGI(TAG, "已进入深度睡眠模式");
 }
+
+

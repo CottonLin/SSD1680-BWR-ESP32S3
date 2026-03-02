@@ -55,6 +55,11 @@
 #define SSD1680_SET_RAM_X_ADDRESS_COUNTER   0x4E
 #define SSD1680_SET_RAM_Y_ADDRESS_COUNTER   0x4F
 
+// ==================== 刷新模式 ====================
+typedef enum {
+    EPD_REFRESH_FULL = 0        // 强制全屏刷新（标准模式，30 秒）
+} epd_refresh_mode_t;
+
 // ==================== 数据结构 ====================
 typedef struct {
     spi_host_device_t spi_host;

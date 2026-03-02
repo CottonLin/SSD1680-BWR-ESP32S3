@@ -363,7 +363,7 @@ void epd_show_string_wrap(epd_canvas_t *canvas, uint16_t x, uint16_t y,
     uint16_t current_y = y;
     uint16_t line_height = font->height + 2;  // 行高 = 字体高度 + 2 像素行间距
     uint16_t char_spacing = 1;  // 字符间距
-    const char *word_start;
+    __attribute__((unused)) const char *word_start;  // 保留供未来扩展
     uint16_t word_width;
     uint16_t remaining_width;
     
