@@ -981,15 +981,11 @@ TEST_CASE("Get string height", "[epd_gui][text]")
 }
 
 /**
- * @brief 测试入口函数
+ * @brief 测试初始化函数（由 main.c 的 app_main 调用）
  */
-void app_main(void)
+void epd_tests_run(void)
 {
     ESP_LOGI(TAG, "=== 开始 EPD GUI 和字体系统测试 ===");
-    
-    // 初始化 EPD 驱动（测试需要）
-    // 注意：实际测试中可能需要初始化硬件
-    // 这里假设测试在模拟器或 Mock 环境中运行
     
     // 运行所有测试用例
     unity_run_menu();

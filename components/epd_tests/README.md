@@ -4,6 +4,8 @@
 
 本组件提供 SSD1680 GUI 和字体系统的单元测试，基于 ESP-IDF Unity 测试框架。
 
+**注意**: 本组件不包含 `app_main()` 函数，测试由 `main/main.c` 中的 `app_main()` 调用 `epd_tests_run()` 启动。
+
 ## 测试覆盖范围
 
 ### 画布管理测试 (`[epd_gui][canvas]`)

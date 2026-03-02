@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "epd_tests.h"
 
 static const char *TAG = "MAIN";
 
@@ -277,9 +278,8 @@ void app_main(void)
     // 2. 根据配置运行对应测试
 #if ENABLE_UNIT_TEST
     ESP_LOGI(TAG, "=== 开始运行单元测试 ===");
-    // 单元测试入口（在 epd_tests.c 中定义）
-    extern void unity_run_menu(void);
-    unity_run_menu();
+    // 调用测试组件的测试运行函数
+    epd_tests_run();
 #elif ENABLE_BASIC_TEST
     basic_test();
 #elif ENABLE_GEOMETRY_TEST
