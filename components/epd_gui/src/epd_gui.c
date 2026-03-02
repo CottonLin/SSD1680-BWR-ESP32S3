@@ -349,9 +349,10 @@ esp_err_t epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
         return ESP_ERR_INVALID_ARG;
     }
 
+    // 二维数组格式：直接通过索引访问字符数据
     const uint8_t *font_data = (const uint8_t *)font->data;
     uint16_t char_index = (chr - font->first_char) * font->char_bytes;
-    const uint8_t *font_ptr = font_data + char_index;
+    const uint8_t *char_ptr = font_data + char_index;
     
     uint16_t bytes_per_line = (font->width + 7) / 8;
     
@@ -359,7 +360,7 @@ esp_err_t epd_show_char(epd_canvas_t *canvas, uint16_t x, uint16_t y,
         for (uint8_t col = 0; col < font->width; col++) {
             uint8_t byte_idx = col / 8;
             uint8_t bit_idx = col % 8;
-            uint8_t font_data_byte = font_ptr[row * bytes_per_line + byte_idx];
+            uint8_t font_data_byte = char_ptr[row * bytes_per_line + byte_idx];
             
             if (font_data_byte & (0x80 >> bit_idx)) {
                 epd_canvas_set_pixel(canvas, x + col, y + row, color);

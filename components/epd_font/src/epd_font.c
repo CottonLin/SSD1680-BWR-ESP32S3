@@ -14,7 +14,7 @@ static const epd_font_t g_font_6x8 = {
     .height = 8,
     .first_char = 0x20,
     .last_char = 0x7E,
-    .char_bytes = 8
+    .char_bytes = 8  // 每字符 8 字节
 };
 
 /**
@@ -26,7 +26,7 @@ static const epd_font_t g_font_6x12 = {
     .height = 12,
     .first_char = 0x20,
     .last_char = 0x7E,
-    .char_bytes = 12
+    .char_bytes = 12  // 每字符 12 字节
 };
 
 /**
@@ -38,7 +38,7 @@ static const epd_font_t g_font_8x16 = {
     .height = 16,
     .first_char = 0x20,
     .last_char = 0x7E,
-    .char_bytes = 16
+    .char_bytes = 16  // 每字符 16 字节
 };
 
 /**
@@ -50,7 +50,7 @@ static const epd_font_t g_font_12x24 = {
     .height = 24,
     .first_char = 0x20,
     .last_char = 0x7E,
-    .char_bytes = 48
+    .char_bytes = 48  // 每字符 48 字节
 };
 
 /**

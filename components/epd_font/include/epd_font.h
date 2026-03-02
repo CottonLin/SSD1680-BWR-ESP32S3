@@ -12,21 +12,17 @@ extern "C" {
  * @brief 字体对象结构
  * 
  * 字体数据结构说明：
- * - 前 6 字节为字体头信息：
- *   - [0]: first_char (第一个字符的 ASCII 码)
- *   - [1]: last_char (最后一个字符的 ASCII 码)
- *   - [2]: width (字体宽度，像素)
- *   - [3]: height (字体高度，像素)
- *   - [4-5]: char_bytes (每个字符的字节数，小端序)
- * - 从第 6 字节开始为字模数据
+ * - 二维数组格式：g_font_data[字符数][每字符字节数]
+ * - 字符索引：(chr - first_char) 直接作为数组下标
+ * - 无需字体头，字模数据直接从数组第 0 个元素开始
  */
 typedef struct {
-    const uint8_t *data;      /**< 字模数据指针（包含字体头） */
-    uint8_t width;            /**< 字体宽度 (像素) */
-    uint8_t height;           /**< 字体高度 (像素) */
-    uint8_t first_char;       /**< 第一个字符的 ASCII 码 */
-    uint8_t last_char;        /**< 最后一个字符的 ASCII 码 */
-    uint16_t char_bytes;      /**< 每个字符的字节数 */
+    const void *data;       /**< 字模数据指针（二维数组） */
+    uint8_t width;          /**< 字体宽度 (像素) */
+    uint8_t height;         /**< 字体高度 (像素) */
+    uint8_t first_char;     /**< 第一个字符的 ASCII 码 */
+    uint8_t last_char;      /**< 最后一个字符的 ASCII 码 */
+    uint16_t char_bytes;    /**< 每个字符的字节数 */
 } epd_font_t;
 
 /**
@@ -94,60 +90,64 @@ typedef enum {
  * 
  * 字模数据位置标注：
  * - 数组名称：g_font_6x8_data
- * - 数据大小：95 字符 × 8 字节 + 6 字节头 = 766 字节
+ * - 数组格式：const unsigned char g_font_6x8_data[95][8]
+ * - 数据大小：95 字符 × 8 字节 = 760 字节
  * - 字符范围：0x20 (空格) ~ 0x7E (~)
  * 
  * 使用方法：
- * 1. 在用户文件中定义 const uint8_t g_font_6x8_data[766]
- * 2. 按照上述格式填充字体头和字模数据
- * 3. 在本文件中 extern 声明
+ * 1. 在用户文件中定义 const unsigned char g_font_6x8_data[95][8]
+ * 2. 从原 STM32 项目的 asc2_0806 数组直接复制
+ * 3. 无需字体头，数据从第 0 个字符开始
  */
-extern const uint8_t g_font_6x8_data[];
+extern const unsigned char g_font_6x8_data[][8];
 
 /**
  * @brief 6×12 字体数据（用户需自行导入）
  * 
  * 字模数据位置标注：
  * - 数组名称：g_font_6x12_data
- * - 数据大小：95 字符 × 12 字节 + 6 字节头 = 1146 字节
+ * - 数组格式：const unsigned char g_font_6x12_data[95][12]
+ * - 数据大小：95 字符 × 12 字节 = 1140 字节
  * - 字符范围：0x20 (空格) ~ 0x7E (~)
  * 
  * 使用方法：
- * 1. 在用户文件中定义 const uint8_t g_font_6x12_data[1146]
- * 2. 按照上述格式填充字体头和字模数据
- * 3. 在本文件中 extern 声明
+ * 1. 在用户文件中定义 const unsigned char g_font_6x12_data[95][12]
+ * 2. 从原 STM32 项目的 asc2_1206 数组直接复制
+ * 3. 无需字体头，数据从第 0 个字符开始
  */
-extern const uint8_t g_font_6x12_data[];
+extern const unsigned char g_font_6x12_data[][12];
 
 /**
  * @brief 8×16 字体数据（用户需自行导入）
  * 
  * 字模数据位置标注：
  * - 数组名称：g_font_8x16_data
- * - 数据大小：95 字符 × 16 字节 + 6 字节头 = 1526 字节
+ * - 数组格式：const unsigned char g_font_8x16_data[95][16]
+ * - 数据大小：95 字符 × 16 字节 = 1520 字节
  * - 字符范围：0x20 (空格) ~ 0x7E (~)
  * 
  * 使用方法：
- * 1. 在用户文件中定义 const uint8_t g_font_8x16_data[1526]
- * 2. 按照上述格式填充字体头和字模数据
- * 3. 在本文件中 extern 声明
+ * 1. 在用户文件中定义 const unsigned char g_font_8x16_data[95][16]
+ * 2. 从原 STM32 项目的 asc2_1608 数组直接复制
+ * 3. 无需字体头，数据从第 0 个字符开始
  */
-extern const uint8_t g_font_8x16_data[];
+extern const unsigned char g_font_8x16_data[][16];
 
 /**
  * @brief 12×24 字体数据（用户需自行导入）
  * 
  * 字模数据位置标注：
  * - 数组名称：g_font_12x24_data
- * - 数据大小：95 字符 × 48 字节 + 6 字节头 = 4566 字节
+ * - 数组格式：const unsigned char g_font_12x24_data[95][48]
+ * - 数据大小：95 字符 × 48 字节 = 4560 字节
  * - 字符范围：0x20 (空格) ~ 0x7E (~)
  * 
  * 使用方法：
- * 1. 在用户文件中定义 const uint8_t g_font_12x24_data[4566]
- * 2. 按照上述格式填充字体头和字模数据
- * 3. 在本文件中 extern 声明
+ * 1. 在用户文件中定义 const unsigned char g_font_12x24_data[95][48]
+ * 2. 从原 STM32 项目的 asc2_2412 数组直接复制
+ * 3. 无需字体头，数据从第 0 个字符开始
  */
-extern const uint8_t g_font_12x24_data[];
+extern const unsigned char g_font_12x24_data[][48];
 
 /**
  * @brief 获取字体对象
