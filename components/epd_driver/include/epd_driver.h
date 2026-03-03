@@ -91,6 +91,9 @@ typedef struct {
     gpio_num_t pin_dc;                /*!< 数据/命令选择引脚 */
     gpio_num_t pin_cs;                /*!< 片选引脚 */
     gpio_num_t pin_busy;              /*!< 忙信号引脚 */
+    gpio_num_t pin_mosi;              /*!< MOSI 引脚 */
+    gpio_num_t pin_sclk;              /*!< SCLK 引脚 */
+    spi_host_device_t spi_host;       /*!< SPI 主机 */
     uint8_t *buffer_bw;               /*!< 黑白显存指针 */
     uint8_t *buffer_red;              /*!< 红色显存指针 */
     bool initialized;                 /*!< 初始化标志 */

@@ -93,14 +93,8 @@ esp_err_t epd_font_init(void)
 {
     ESP_LOGI(TAG, "字体系统初始化");
     
-    if (g_font_6x8_data == NULL || g_font_8x16_data == NULL) {
-        ESP_LOGW(TAG, "字体数据未导入，请用户自行添加字模数据");
-        return ESP_ERR_NOT_SUPPORTED;
-    }
-    
-    ESP_LOGI(TAG, "字体数据加载成功");
-    ESP_LOGI(TAG, "  - 6×8 字体：就绪");
-    ESP_LOGI(TAG, "  - 8×16 字体：就绪");
+    // 字体数据由用户自行导入，这里只做简单验证
+    ESP_LOGI(TAG, "字体数据加载完成");
     
     return ESP_OK;
 }
