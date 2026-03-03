@@ -504,20 +504,13 @@ esp_err_t epd_display(epd_handle_t *handle,
     epd_write_data(handle, 0x00);
     epd_write_data(handle, 0x00);
     
-    // 写入红色显存（取反）
-    ESP_LOGI(TAG, "写入红色显存：%d 字节（取反）", EPD_BUFFER_SIZE);
-    
-    // 创建取反后的缓冲区（使用静态缓冲区避免内存分配问题）
-    static uint8_t s_inverted_red[EPD_BUFFER_SIZE];
-    
-    // 复制并取反红色缓冲区数据
-    memcpy(s_inverted_red, buffer_red, EPD_BUFFER_SIZE);
-    for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
-        s_inverted_red[i] = ~s_inverted_red[i];
-    }
+    // 写入红色显存
+    // SSD1680 红色显存逻辑：0 = 显示红色，1 = 不显示（透明）
+    // 与黑白显存一致，不需要取反
+    ESP_LOGI(TAG, "写入红色显存：%d 字节", EPD_BUFFER_SIZE);
     
     epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
-    epd_write_data_batch(handle, s_inverted_red, EPD_BUFFER_SIZE);
+    epd_write_data_batch(handle, buffer_red, EPD_BUFFER_SIZE);
     
     ESP_LOGI(TAG, "显存数据写入完成");
     
