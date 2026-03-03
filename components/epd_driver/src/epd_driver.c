@@ -506,13 +506,27 @@ esp_err_t epd_display(epd_handle_t *handle,
     epd_write_data(handle, 0x00);
     
     // 写入红色显存
-    // SSD1680 红色显存逻辑：0 = 显示红色，1 = 不显示（透明）
-    // 与黑白显存一致，不需要取反
+    // SSD1680 红色显存实际逻辑需要验证：
+    // 假设 1: 0 = 显示红色，1 = 不显示（透明） - 与 B/W 一致
+    // 假设 2: 0 = 不显示，1 = 显示红色 - 与 B/W 相反
+    // 当前使用假设 1，如显示异常请尝试假设 2
     ESP_LOGI(TAG, "写入红色显存：%d 字节", EPD_BUFFER_SIZE);
     ESP_LOG_BUFFER_HEX_LEVEL(TAG, "Red buffer[0-15]:", buffer_red, 16, ESP_LOG_INFO);
     
+    // 创建临时缓冲区（可能需要取反）
+    static uint8_t s_red_temp[EPD_BUFFER_SIZE];
+    memcpy(s_red_temp, buffer_red, EPD_BUFFER_SIZE);
+    
+    // 尝试假设 2：如果红色显存逻辑与 B/W 相反，需要取反
+    // 0xFF (白) -> 0x00 (显示红)
+    // 0x00 (红) -> 0xFF (不显示)
+    for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
+        s_red_temp[i] = ~s_red_temp[i];
+    }
+    ESP_LOG_BUFFER_HEX_LEVEL(TAG, "Red inverted[0-15]:", s_red_temp, 16, ESP_LOG_INFO);
+    
     epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
-    epd_write_data_batch(handle, buffer_red, EPD_BUFFER_SIZE);
+    epd_write_data_batch(handle, s_red_temp, EPD_BUFFER_SIZE);
     
     ESP_LOGI(TAG, "显存数据写入完成");
     
