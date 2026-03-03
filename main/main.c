@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "ssd1680.h"
+#include "epd_driver.h"
 #include "epd_gui.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
