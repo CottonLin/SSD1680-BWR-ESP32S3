@@ -1,64 +1,69 @@
-I (287) MAIN: SSD1680 测试程序启动
-I (287) MAIN: 配置：BASIC=0, GEOMETRY=1, FONT=0
-I (287) MAIN: 初始化显示屏...
-I (287) EPD_DRIVER: 初始化 SSD1680 显示屏
-I (297) EPD_DRIVER: SPI 初始化完成 (频率：8000000 Hz)
-I (297) EPD_DRIVER: 显存分配完成 (5624 字节)
-I (417) EPD_DRIVER: 硬件复位完成
-I (417) EPD_DRIVER: SSD1680 初始化完成
-I (417) MAIN: 显示屏初始化成功
-I (417) MAIN: === 开始几何图形绘制测试 ===
-I (417) EPD_GUI: 画布创建成功：296x152 (内部：152x296)
-I (427) MAIN: 清屏...
-I (427) EPD_DRIVER: === 开始写入显存数据 ===
-I (427) EPD_DRIVER: 写入黑白显存：5624 字节
-I (437) EPD_DRIVER: 写入红色显存：5624 字节（取反）
-I (447) EPD_DRIVER: 显存数据写入完成
-I (447) EPD_DRIVER: === 开始全屏刷新 ===
-I (447) EPD_DRIVER: 刷新模式：标准全刷
-I (447) EPD_DRIVER: 预计耗时：约 30 秒
-I (457) EPD_DRIVER: 刷新命令已发送，等待完成...
-I (22657) EPD_DRIVER: === 全屏刷新完成 ===
-I (22657) EPD_DRIVER: 实际耗时：22.2 秒
-I (22657) MAIN: 绘制边框矩形（黑色）...
-Guru Meditation Error: Core  / panic'ed (Cache error). 
+I (282) main_task: Calling app_main()
+I (282) MAIN: SSD1680 测试程序启动
+I (282) MAIN: 配置：BASIC=0, GEOMETRY=1, FONT=0
+I (282) MAIN: 初始化显示屏...
+I (282) EPD_DRIVER: 初始化 SSD1680 显示屏
+I (292) EPD_DRIVER: SPI 初始化完成 (频率：8000000 Hz)
+I (292) EPD_DRIVER: 显存分配完成 (5624 字节)
+I (412) EPD_DRIVER: 硬件复位完成
+I (412) EPD_DRIVER: SSD1680 初始化完成
+I (412) MAIN: 显示屏初始化成功
+I (412) MAIN: === 开始几何图形绘制测试 ===
+I (412) EPD_GUI: 画布创建成功：296x152 (内部：152x296)
+I (422) MAIN: 清屏...
+I (422) EPD_DRIVER: === 开始写入显存数据 ===
+I (422) EPD_DRIVER: 写入黑白显存：5624 字节
+I (432) EPD_DRIVER: 写入红色显存：5624 字节（取反）
+I (442) EPD_DRIVER: 显存数据写入完成
+I (442) EPD_DRIVER: === 开始全屏刷新 ===
+I (442) EPD_DRIVER: 刷新模式：标准全刷
+I (442) EPD_DRIVER: 预计耗时：约 30 秒
+I (452) EPD_DRIVER: 刷新命令已发送，等待完成...
+I (22662) EPD_DRIVER: === 全屏刷新完成 ===
+I (22662) EPD_DRIVER: 实际耗时：22.2 秒
+I (22662) MAIN: 绘制边框矩形（黑色）...
+I (22662) MAIN: 绘制对角线（黑色）...
+I (22662) MAIN: 绘制实心矩形（红色）...
+I (22672) MAIN: 绘制空心圆（黑色）...
+I (22672) MAIN: 绘制实心圆（红色）...
+I (22682) EPD_DRIVER: === 开始写入显存数据 ===
+I (22682) EPD_DRIVER: 写入黑白显存：5624 字节
+I (22692) EPD_DRIVER: 写入红色显存：5624 字节（取反）
+Guru Meditation Error: Core  0 panic'ed (Cache error). 
 Cache disabled but cached memory region accessed
 
 Core  0 register dump:
-PC      : 0x42009c63  PS      : 0x00060c34  A0      : 0x82009cbb  A1      : 0x3fc9a590
---- 0x42009c63: epd_canvas_set_pixel at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:138
-A2      : 0x00000000  A3      : 0x00000127  A4      : 0x00000007  A5      : 0x00000000
-A6      : 0x00000024  A7      : 0x3fc9a490  A8      : 0x000000aa  A9      : 0x3fc916a1
-A10     : 0x00001609  A11     : 0x00000000  A12     : 0x00000080  A13     : 0x00000080
-A14     : 0x3fc9a5a2  A15     : 0xfffffffc  SAR     : 0x00000000  EXCCAUSE: 0x00000007
-EXCVADDR: 0x00000000  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffe
+PC      : 0x4038148c  PS      : 0x00060e34  A0      : 0x80380c8c  A1      : 0x3fc9a500  
+--- 0x4038148c: insert_free_block at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:412
+--- (inlined by) block_insert at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:430
+--- (inlined by) block_trim_free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:554
+--- (inlined by) block_prepare_used at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:631
+--- (inlined by) tlsf_malloc at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf.c:445
+A2      : 0x3fcecb64  A3      : 0x00001600  A4      : 0x3fceb550  A5      : 0x00000003
+A6      : 0x000015f8  A7      : 0x3fc984f0  A8      : 0x3fce9724  A9      : 0x3fcee168
+A10     : 0x00000000  A11     : 0x4201c354  A12     : 0x00000010  A13     : 0x3fce9770
+--- 0x4201c354: gdma_ahb_hal_enable_intr at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/hal/gdma_hal_ahb_v1.c:119
+A14     : 0x00000004  A15     : 0xfffffffc  SAR     : 0x0000001c  EXCCAUSE: 0x00000007
+EXCVADDR: 0x00000000  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd
 --- 0x400556d5: strlen in ROM
 --- 0x400556e5: strlen in ROM
 
 
-Backtrace: 0x42009c60:0x3fc9a590 0x42009cb8:0x3fc9a5d0 0x42009d67:0x3fc9a610 0x42009890:0x3fc9a630 0x42009a23:0x3fc9a670 0x4201be50:0x3fc9a6a0 0x4037b585:0x3fc9a6d0
---- 0x42009c60: epd_canvas_set_pixel at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:137
---- 0x42009cb8: epd_draw_line at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:163
---- 0x42009d67: epd_draw_rectangle at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:208
---- 0x42009890: geometry_test at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:137
---- 0x42009a23: app_main at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:317
---- 0x4201be50: main_task at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/freertos/app_startup.c:208
+Backtrace: 0x40381489:0x3fc9a500 0x40380c89:0x3fc9a520 0x40376235:0x3fc9a540 0x4037633d:0x3fc9a560 0x4037636d:0x3fc9a590 0x40375fe0:0x3fc9a5b0 0x40376015:0x3fc9a5d0 0x4038240d:0x3fc9a5f0 0x4200a646:0x3fc9a610 0x420098e8:0x3fc9a630 0x420099af:0x3fc9a670 0x4201be30:0x3fc9a6a0 0x4037b585:0x3fc9a6d0
+--- 0x40381489: insert_free_block at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:403
+--- (inlined by) block_insert at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:430
+--- (inlined by) block_trim_free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:554
+--- (inlined by) block_prepare_used at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:631
+--- (inlined by) tlsf_malloc at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf.c:445
+--- 0x40380c89: multi_heap_malloc_impl at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/multi_heap.c:216
+--- 0x40376235: aligned_or_unaligned_alloc at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps_base.c:93
+--- 0x4037633d: heap_caps_aligned_alloc_base at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps_base.c:175
+--- 0x4037636d: heap_caps_malloc_base at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps_base.c:202
+--- 0x40375fe0: heap_caps_malloc at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps.c:84
+--- 0x40376015: heap_caps_malloc_default at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps.c:110
+--- 0x4038240d: malloc at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/newlib/src/heap.c:24
+--- 0x4200a646: epd_display at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:511
+--- 0x420098e8: geometry_test at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:142
+--- 0x420099af: app_main at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:291
+--- 0x4201be30: main_task at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/freertos/app_startup.c:208
 --- 0x4037b585: vPortTaskWrapper at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
-
-
-
-
-ELF file SHA256: 326e38ac3
-
-Rebooting...
-���ESP-ROM:esp32s3-20210327
-Build:Mar 27 2021
-rst:0xc (RTC_SW_CPU_RST),boot:0xb (SPI_FAST_FLASH_BOOT)
-Saved PC:0x403759dc
---- 0x403759dc: esp_restart_noos at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/esp_system/port/soc/esp32s3/system_internal.c:162
-SPIWP:0xee
-mode:DIO, clock div:1
-load:0x3fce2820,len:0x159c
-load:0x403c8700,len:0xd24
-load:0x403cb700,len:0x2f48
-entry 0x403c8924

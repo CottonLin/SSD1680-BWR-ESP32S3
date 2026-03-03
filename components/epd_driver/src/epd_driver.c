@@ -507,20 +507,17 @@ esp_err_t epd_display(epd_handle_t *handle,
     // 写入红色显存（取反）
     ESP_LOGI(TAG, "写入红色显存：%d 字节（取反）", EPD_BUFFER_SIZE);
     
-    // 创建取反后的缓冲区
-    uint8_t *inverted_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    if (inverted_red != NULL) {
-        for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
-            inverted_red[i] = ~buffer_red[i];
-        }
-        epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
-        epd_write_data_batch(handle, inverted_red, EPD_BUFFER_SIZE);
-        free(inverted_red);
-    } else {
-        ESP_LOGW(TAG, "内存分配失败，使用原数据");
-        epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
-        epd_write_data_batch(handle, buffer_red, EPD_BUFFER_SIZE);
+    // 创建取反后的缓冲区（使用静态缓冲区避免内存分配问题）
+    static uint8_t s_inverted_red[EPD_BUFFER_SIZE];
+    
+    // 复制并取反红色缓冲区数据
+    memcpy(s_inverted_red, buffer_red, EPD_BUFFER_SIZE);
+    for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
+        s_inverted_red[i] = ~s_inverted_red[i];
     }
+    
+    epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
+    epd_write_data_batch(handle, s_inverted_red, EPD_BUFFER_SIZE);
     
     ESP_LOGI(TAG, "显存数据写入完成");
     
