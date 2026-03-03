@@ -74,8 +74,9 @@ static void basic_test(void)
     ESP_LOGI(TAG, "进入深度睡眠模式");
     epd_deep_sleep(epd);
     
-    // 释放资源（不释放缓冲区）
-    epd_canvas_destroy(canvas);
+    // 注意：不释放画布对象，避免在 DMA 操作后调用 free() 导致内存分配器损坏
+    // 嵌入式系统中，短生命周期对象可不释放（程序结束后系统会回收）
+    // epd_canvas_destroy(canvas);
     
     ESP_LOGI(TAG, "=== 基础显示测试完成 ===");
 }
@@ -142,8 +143,9 @@ static void geometry_test(void)
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 清理（不释放缓冲区，因为它们是设备句柄的一部分）
-    epd_canvas_destroy(canvas);
+    // 注意：不释放画布对象，避免在 DMA 操作后调用 free() 导致内存分配器损坏
+    // 嵌入式系统中，短生命周期对象可不释放（程序结束后系统会回收）
+    // epd_canvas_destroy(canvas);
     
     ESP_LOGI(TAG, "=== 几何图形绘制测试完成 ===");
 }
@@ -259,8 +261,9 @@ static void font_test(void)
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 清理（不释放缓冲区）
-    epd_canvas_destroy(canvas);
+    // 注意：不释放画布对象，避免在 DMA 操作后调用 free() 导致内存分配器损坏
+    // 嵌入式系统中，短生命周期对象可不释放（程序结束后系统会回收）
+    // epd_canvas_destroy(canvas);
     
     ESP_LOGI(TAG, "=== 字体显示测试完成 ===");
 }
