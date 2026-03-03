@@ -3,7 +3,7 @@
 [![ESP-IDF](https://img.shields.io/badge/ESP--IDF-v5.5-blue.svg)](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32s3/)
 [![Platform](https://img.shields.io/badge/Platform-ESP32--S3-orange.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
 [![Display](https://img.shields.io/badge/Display-SSD1680_E--Paper-green.svg)](https://www.e-paper-display.com/products_detail/productId=397.html)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 基于 **ESP32-S3** 和 **SSD1680** 驱动 IC 的三色电子纸显示项目，支持黑/红/白三色显示，采用模块化组件架构，适用于 ESP-IDF v5.5 平台。
 
@@ -533,7 +533,19 @@ canvas = epd_canvas_create(buffer_bw, NULL, 296, 152);
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+本项目采用 Apache 2.0 许可证。详见 [LICENSE](LICENSE) 文件。
+
+**许可证要点**：
+- ✅ 商业使用：允许
+- ✅ 修改：允许
+- ✅ 分发：允许
+- ✅ 专利使用：允许
+- ✅ 私人使用：允许
+- ⚠️ 许可证和版权声明：必须保留
+- ⚠️ 状态变更说明：必须标注
+- ⚠️ 商标使用：不允许
+
+详见：[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 ---
 
