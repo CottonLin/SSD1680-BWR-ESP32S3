@@ -239,7 +239,7 @@ uint16_t epd_font_get_string_width(const epd_font_t *font, const char *str);
 
 **特性**:
 - 字模数据外置，用户自行导入
-- 二维数组格式，与原 STM32 项目完全兼容
+- 二维数组格式
 - 支持字体数据动态加载
 
 ---
