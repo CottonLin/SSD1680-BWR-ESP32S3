@@ -34,15 +34,15 @@ epd_write_data_batch(handle, s_red_temp, EPD_BUFFER_SIZE);
 
 **问题**：
 - 用户坐标系 (296×152) 与 SSD1680 内部显存坐标系 (152×296) 映射不正确
-- 原始代码的坐标转换逻辑错误
+- SSD1680 的物理 X 轴方向与用户坐标系相反（从右到左）
 
 **解决方案**：
 ```c
 // 用户坐标 (x_user, y_user) → 内部坐标 (internal_x, internal_y)
-// 用户 X (0-295) → 内部 Y (0-295)  
-// 用户 Y (0-151) → 内部 X (0-151)
-*internal_x = user_y;    // 用户 Y 映射到内部 X
-*internal_y = user_x;    // 用户 X 映射到内部 Y
+// 用户 X (水平 0-295) → 内部 Y (行号 0-295)，不反转
+// 用户 Y (垂直 0-151) → 内部 X (列位 0-151)，需要反转
+*internal_x = (canvas->internal_width - 1) - user_y;  // 151 - user_y
+*internal_y = user_x;                                  // user_x
 ```
 
 ### 3. 显存地址计算错误
