@@ -294,14 +294,13 @@ static void font_test(void)
 
 void app_main(void)
 {
-    esp_err_t ret;
     epd_handle_t *epd;
     
     ESP_LOGI(TAG, "SSD1680 测试程序启动");
     ESP_LOGI(TAG, "配置：BASIC=%d, GEOMETRY=%d, FONT=%d", 
              ENABLE_BASIC_TEST, ENABLE_GEOMETRY_TEST, ENABLE_FONT_TEST);
     
-    // 1. 初始化显示屏（epd_init 会在内部自动初始化）
+    // 1. 获取设备句柄（epd_init 会在内部自动初始化）
     epd = epd_get_handle();
     if (epd == NULL) {
         ESP_LOGE(TAG, "获取设备句柄失败");

@@ -19,6 +19,16 @@ static const char *TAG = "EPD_DRIVER";
 // ==================== 全局设备句柄（兼容层） ====================
 static epd_handle_t *g_epd_legacy = NULL;
 
+// ==================== 公共接口实现 ====================
+
+/**
+ * @brief 获取设备句柄
+ */
+epd_handle_t* epd_get_handle(void)
+{
+    return g_epd_legacy;
+}
+
 // ==================== 内部辅助函数 ====================
 
 /**

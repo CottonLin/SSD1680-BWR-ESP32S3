@@ -136,6 +136,15 @@ static inline epd_config_t epd_get_default_config(void)
 epd_handle_t* epd_init(const epd_config_t *config);
 
 /**
+ * @brief 获取设备句柄
+ * 
+ * @return epd_handle_t* 设备句柄，NULL 表示未初始化
+ * 
+ * @note 在 epd_init() 后调用此函数获取句柄
+ */
+epd_handle_t* epd_get_handle(void);
+
+/**
  * @brief 反初始化设备
  * 
  * @param handle 设备句柄
