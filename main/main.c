@@ -14,8 +14,8 @@ static const char *TAG = "MAIN";
  * 设置为 0: 禁用对应测试
  */
 #define ENABLE_BASIC_TEST       0   // 1=启用基础测试，0=禁用
-#define ENABLE_GEOMETRY_TEST    1   // 1=启用几何图形测试，0=禁用
-#define ENABLE_FONT_TEST        0   // 1=启用字体测试，0=禁用
+#define ENABLE_GEOMETRY_TEST    0   // 1=启用几何图形测试，0=禁用
+#define ENABLE_FONT_TEST        1   // 1=启用字体测试，0=禁用
 
 /**
  * @brief 基础显示测试（清屏、图案显示、睡眠）
