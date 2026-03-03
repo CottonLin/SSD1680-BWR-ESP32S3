@@ -22,7 +22,10 @@ static inline void coordinate_transform(epd_canvas_t *canvas,
         return;
     }
     
-    *internal_x = (canvas->internal_height - 1) - user_y;
+    // 用户坐标 (x,y) -> SSD1680 内部坐标
+    // 用户 X(0-295) -> 内部 Y(0-295)
+    // 用户 Y(0-151) -> 内部 X(0-151)
+    *internal_x = user_y;
     *internal_y = user_x;
 }
 
@@ -114,7 +117,7 @@ esp_err_t epd_canvas_set_pixel(epd_canvas_t *canvas, uint16_t x, uint16_t y, uin
     
     coordinate_transform(canvas, x, y, &internal_x, &internal_y);
     
-    byte_addr = (internal_x / 8) + (internal_y * canvas->width_bytes);
+    byte_addr = (internal_y * canvas->width_bytes) + (internal_x / 8);
     bit_mask = 0x80 >> (internal_x % 8);
     
     if (color == EPD_COLOR_BLACK) {
