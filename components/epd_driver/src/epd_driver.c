@@ -493,6 +493,7 @@ esp_err_t epd_display(epd_handle_t *handle,
     
     // 写入黑白显存
     ESP_LOGI(TAG, "写入黑白显存：%d 字节", EPD_BUFFER_SIZE);
+    ESP_LOG_BUFFER_HEX_LEVEL(TAG, "B/W buffer[0-15]:", buffer_bw, 16, ESP_LOG_INFO);
     epd_write_cmd(handle, SSD1680_WRITE_RAM_BW);
     epd_write_data_batch(handle, buffer_bw, EPD_BUFFER_SIZE);
     
@@ -508,6 +509,7 @@ esp_err_t epd_display(epd_handle_t *handle,
     // SSD1680 红色显存逻辑：0 = 显示红色，1 = 不显示（透明）
     // 与黑白显存一致，不需要取反
     ESP_LOGI(TAG, "写入红色显存：%d 字节", EPD_BUFFER_SIZE);
+    ESP_LOG_BUFFER_HEX_LEVEL(TAG, "Red buffer[0-15]:", buffer_red, 16, ESP_LOG_INFO);
     
     epd_write_cmd(handle, SSD1680_WRITE_RAM_RED);
     epd_write_data_batch(handle, buffer_red, EPD_BUFFER_SIZE);
