@@ -13,8 +13,8 @@ static const char *TAG = "MAIN";
  * 设置为 1: 启用对应测试
  * 设置为 0: 禁用对应测试
  */
-#define ENABLE_BASIC_TEST       1   // 1=启用基础测试，0=禁用
-#define ENABLE_GEOMETRY_TEST    0   // 1=启用几何图形测试，0=禁用
+#define ENABLE_BASIC_TEST       0   // 1=启用基础测试，0=禁用
+#define ENABLE_GEOMETRY_TEST    1   // 1=启用几何图形测试，0=禁用
 #define ENABLE_FONT_TEST        0   // 1=启用字体测试，0=禁用
 
 /**
@@ -30,60 +30,52 @@ static void basic_test(void)
     
     ESP_LOGI(TAG, "=== 开始基础显示测试 ===");
     
-    // 1. 初始化 EPD 驱动
+    // 1. 获取设备句柄
     epd = epd_get_handle();
     if (epd == NULL) {
         ESP_LOGE(TAG, "获取设备句柄失败");
         return;
     }
     
-    // 2. 创建画布
-    test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
+    // 2. 使用设备句柄中的缓冲区
+    test_buffer_bw = epd->buffer_bw;
+    test_buffer_red = epd->buffer_red;
     
-    if (test_buffer_bw == NULL || test_buffer_red == NULL) {
-        ESP_LOGE(TAG, "内存分配失败");
-        return;
-    }
-    
+    // 3. 创建画布
     canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
     if (canvas == NULL) {
         ESP_LOGE(TAG, "创建画布失败");
-        free(test_buffer_bw);
-        free(test_buffer_red);
         return;
     }
     
-    // 3. 清屏测试
+    // 4. 清屏测试
     ESP_LOGI(TAG, "清屏测试...");
     epd_canvas_clear(canvas, EPD_COLOR_WHITE);
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(2000));
     
-    // 4. 填充测试图案：黑白条纹
+    // 5. 填充测试图案：黑白条纹
     ESP_LOGI(TAG, "显示测试图案...");
     for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
         test_buffer_bw[i] = (i % 2 == 0) ? 0xAA : 0x55;
         test_buffer_red[i] = 0xFF;
     }
     
-    // 5. 显示测试图案
+    // 6. 显示测试图案
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 6. 再次清屏
+    // 7. 再次清屏
     ESP_LOGI(TAG, "再次清屏...");
     epd_canvas_clear(canvas, EPD_COLOR_WHITE);
     epd_display(epd, test_buffer_bw, test_buffer_red);
     
-    // 7. 进入深度睡眠
+    // 8. 进入深度睡眠
     ESP_LOGI(TAG, "进入深度睡眠模式");
     epd_deep_sleep(epd);
     
-    // 释放资源
+    // 释放资源（不释放缓冲区）
     epd_canvas_destroy(canvas);
-    free(test_buffer_bw);
-    free(test_buffer_red);
     
     ESP_LOGI(TAG, "=== 基础显示测试完成 ===");
 }
@@ -109,27 +101,20 @@ static void geometry_test(void)
         return;
     }
     
-    // 创建两个显存缓冲区
-    test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    if (test_buffer_bw == NULL || test_buffer_red == NULL) {
-        ESP_LOGE(TAG, "显存分配失败");
-        return;
-    }
+    // 创建两个显存缓冲区（使用设备句柄中的缓冲区）
+    test_buffer_bw = epd->buffer_bw;
+    test_buffer_red = epd->buffer_red;
     
     // 创建画布（传入两个缓冲区）
     canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
     if (canvas == NULL) {
         ESP_LOGE(TAG, "画布创建失败");
-        free(test_buffer_bw);
-        free(test_buffer_red);
         return;
     }
     
     // 1. 清屏
     ESP_LOGI(TAG, "清屏...");
-    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
-    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
     epd_display(epd, test_buffer_bw, test_buffer_red);
     
     // 2. 绘制边框矩形（黑色）
@@ -157,10 +142,8 @@ static void geometry_test(void)
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 清理
+    // 清理（不释放缓冲区，因为它们是设备句柄的一部分）
     epd_canvas_destroy(canvas);
-    free(test_buffer_bw);
-    free(test_buffer_red);
     
     ESP_LOGI(TAG, "=== 几何图形绘制测试完成 ===");
 }
@@ -187,27 +170,20 @@ static void font_test(void)
         return;
     }
     
-    // 创建两个显存缓冲区
-    test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
-    if (test_buffer_bw == NULL || test_buffer_red == NULL) {
-        ESP_LOGE(TAG, "显存分配失败");
-        return;
-    }
+    // 使用设备句柄中的缓冲区
+    test_buffer_bw = epd->buffer_bw;
+    test_buffer_red = epd->buffer_red;
     
     // 创建画布（传入两个缓冲区）
     canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
     if (canvas == NULL) {
         ESP_LOGE(TAG, "画布创建失败");
-        free(test_buffer_bw);
-        free(test_buffer_red);
         return;
     }
     
     // 1. 清屏
     ESP_LOGI(TAG, "清屏...");
-    memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
-    memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
     epd_display(epd, test_buffer_bw, test_buffer_red);
     
     // 2. 显示不同字号的字体
@@ -283,10 +259,8 @@ static void font_test(void)
     epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 清理
+    // 清理（不释放缓冲区）
     epd_canvas_destroy(canvas);
-    free(test_buffer_bw);
-    free(test_buffer_red);
     
     ESP_LOGI(TAG, "=== 字体显示测试完成 ===");
 }
