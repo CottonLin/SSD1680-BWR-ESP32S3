@@ -1,87 +1,26 @@
-I (287) MAIN: SSD1680 测试程序启动
-I (287) MAIN: 配置：BASIC=0, GEOMETRY=1, FONT=0
-I (287) MAIN: 初始化显示屏...
-I (287) EPD_DRIVER: 初始化 SSD1680 显示屏
-I (297) EPD_DRIVER: SPI 初始化完成 (频率：8000000 Hz)
-I (297) EPD_DRIVER: 显存分配完成 (5624 字节)
-I (417) EPD_DRIVER: 硬件复位完成
-I (417) EPD_DRIVER: SSD1680 初始化完成
-I (417) MAIN: 显示屏初始化成功
-I (417) MAIN: === 开始几何图形绘制测试 ===
-I (417) EPD_GUI: 画布创建成功：296x152 (内部：152x296)
-I (427) MAIN: 清屏...
-I (427) EPD_DRIVER: === 开始写入显存数据 ===
-I (427) EPD_DRIVER: 写入黑白显存：5624 字节
-I (437) EPD_DRIVER: 写入红色显存：5624 字节（取反）
-I (447) EPD_DRIVER: 显存数据写入完成
-I (447) EPD_DRIVER: === 开始全屏刷新 ===
-I (447) EPD_DRIVER: 刷新模式：标准全刷
-I (447) EPD_DRIVER: 预计耗时：约 30 秒
-I (457) EPD_DRIVER: 刷新命令已发送，等待完成...
-I (22657) EPD_DRIVER: === 全屏刷新完成 ===
-I (22657) EPD_DRIVER: 实际耗时：22.2 秒
-I (22657) MAIN: 绘制边框矩形（黑色）...
-I (22667) MAIN: 绘制对角线（黑色）...
-I (22667) MAIN: 绘制实心矩形（红色）...
-I (22677) MAIN: 绘制空心圆（黑色）...
-I (22677) MAIN: 绘制实心圆（红色）...
-I (22677) EPD_DRIVER: === 开始写入显存数据 ===
-I (22687) EPD_DRIVER: 写入黑白显存：5624 字节
-I (22697) EPD_DRIVER: 写入红色显存：5624 字节（取反）
-I (22697) EPD_DRIVER: 显存数据写入完成
-I (22697) EPD_DRIVER: === 开始全屏刷新 ===
-I (22707) EPD_DRIVER: 刷新模式：标准全刷
-I (22707) EPD_DRIVER: 预计耗时：约 30 秒
-I (22717) EPD_DRIVER: 刷新命令已发送，等待完成...
-I (44917) EPD_DRIVER: === 全屏刷新完成 ===
-I (44917) EPD_DRIVER: 实际耗时：22.2 秒
-Guru Meditation Error: Core  0 panic'ed (Cache error). 
-Cache disabled but cached memory region accessed
-
-Core  0 register dump:
-PC      : 0x403810e5  PS      : 0x00060c34  A0      : 0x80380c0f  A1      : 0x3fc9bb90
---- 0x403810e5: align_ptr at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:256
---- (inlined by) insert_free_block at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:406
---- (inlined by) block_insert at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:430
---- (inlined by) tlsf_free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf.c:634
-A2      : 0x3fce9724  A3      : 0x3fcecb54  A4      : 0x8037b8e9  A5      : 0x3fc95a70  
-A6      : 0x00060023  A7      : 0x3fcecb4c  A8      : 0x4201c320  A9      : 0x00000000  
---- 0x4201c320: gdma_ahb_hal_enable_intr at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/hal/gdma_hal_ahb_v1.c:119
-A10     : 0x00000010  A11     : 0x3fce9770  A12     : 0x00000004  A13     : 0x3fce97a4
-A14     : 0x4201c320  A15     : 0x0000cdcd  SAR     : 0x0000001c  EXCCAUSE: 0x00000007  
---- 0x4201c320: gdma_ahb_hal_enable_intr at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/hal/gdma_hal_ahb_v1.c:119
-EXCVADDR: 0x00000000  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
---- 0x400556d5: strlen in ROM
---- 0x400556e5: strlen in ROM
-
-
-Backtrace: 0x403810e2:0x3fc9bb90 0x40380c0c:0x3fc9bbb0 0x4037628e:0x3fc9bbd0 0x40382419:0x3fc9bbf0 0x42009ad2:0x3fc9bc10 0x420098f6:0x3fc9bc30 0x420099af:0x3fc9bc70 0x4201bdfc:0x3fc9bca0 0x4037b585:0x3fc9bcd0
---- 0x403810e2: insert_free_block at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:404
---- (inlined by) block_insert at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf_control_functions.h:430
---- (inlined by) tlsf_free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/tlsf/tlsf.c:634
---- 0x40380c0c: multi_heap_free_impl at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/multi_heap.c:240
---- 0x4037628e: heap_caps_free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/heap/heap_caps_base.c:86
---- 0x40382419: free at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/newlib/src/heap.c:34
---- 0x42009ad2: epd_canvas_destroy at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:71
---- 0x420098f6: geometry_test at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:146
---- 0x420099af: app_main at C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:291
---- 0x4201bdfc: main_task at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/freertos/app_startup.c:208
---- 0x4037b585: vPortTaskWrapper at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
-
-
-
-
-ELF file SHA256: 2a1076f48
-
-Rebooting...
-ESP-ROM:esp32s3-20210327
-Build:Mar 27 2021
-rst:0xc (RTC_SW_CPU_RST),boot:0xb (SPI_FAST_FLASH_BOOT)
-Saved PC:0x403759dc
---- 0x403759dc: esp_restart_noos at C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/esp_system/port/soc/esp32s3/system_internal.c:162
-SPIWP:0xee
-mode:DIO, clock div:1
-load:0x3fce2820,len:0x159c
-load:0x403c8700,len:0xd24
-load:0x403cb700,len:0x2f48
-entry 0x403c8924
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c: In function 'epd_display':
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:496:83: error: macro "ESP_LOG_BUFFER_HEX_LEVEL" passed 5 arguments, but takes just 4
+  496 |     ESP_LOG_BUFFER_HEX_LEVEL(TAG, "B/W buffer[0-15]:", buffer_bw, 16, ESP_LOG_INFO);
+      |                                                                                   ^
+In file included from C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/log/include/esp_log.h:17,
+                 from C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:10:
+C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/log/include/esp_log_buffer.h:80:9: note: macro "ESP_LOG_BUFFER_HEX_LEVEL" defined here
+   80 | #define ESP_LOG_BUFFER_HEX_LEVEL(tag, buffer, buff_len, level) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:496:5: error: 'ESP_LOG_BUFFER_HEX_LEVEL' undeclared (first use in this function)
+  496 |     ESP_LOG_BUFFER_HEX_LEVEL(TAG, "B/W buffer[0-15]:", buffer_bw, 16, ESP_LOG_INFO);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:496:5: note: each undeclared identifier is reported only once for each function it appears in        
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:514:84: error: macro "ESP_LOG_BUFFER_HEX_LEVEL" passed 5 arguments, but takes just 4
+  514 |     ESP_LOG_BUFFER_HEX_LEVEL(TAG, "Red buffer[0-15]:", buffer_red, 16, ESP_LOG_INFO);
+      |                                                                                    ^
+C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/log/include/esp_log_buffer.h:80:9: note: macro "ESP_LOG_BUFFER_HEX_LEVEL" defined here
+   80 | #define ESP_LOG_BUFFER_HEX_LEVEL(tag, buffer, buff_len, level) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/src/epd_driver.c:526:86: error: macro "ESP_LOG_BUFFER_HEX_LEVEL" passed 5 arguments, but takes just 4
+  526 |     ESP_LOG_BUFFER_HEX_LEVEL(TAG, "Red inverted[0-15]:", s_red_temp, 16, ESP_LOG_INFO);
+      |                                                                                      ^
+C:/Software/Espressif/IDF5.5/Espressif/frameworks/esp-idf-v5.5/components/log/include/esp_log_buffer.h:80:9: note: macro "ESP_LOG_BUFFER_HEX_LEVEL" defined here
+   80 | #define ESP_LOG_BUFFER_HEX_LEVEL(tag, buffer, buff_len, level) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+ninja: build stopped: subcommand failed.
