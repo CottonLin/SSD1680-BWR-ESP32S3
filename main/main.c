@@ -300,10 +300,11 @@ void app_main(void)
     ESP_LOGI(TAG, "配置：BASIC=%d, GEOMETRY=%d, FONT=%d", 
              ENABLE_BASIC_TEST, ENABLE_GEOMETRY_TEST, ENABLE_FONT_TEST);
     
-    // 1. 获取设备句柄（epd_init 会在内部自动初始化）
-    epd = epd_get_handle();
+    // 1. 初始化显示屏
+    ESP_LOGI(TAG, "初始化显示屏...");
+    epd = epd_init(NULL);  // 使用默认配置
     if (epd == NULL) {
-        ESP_LOGE(TAG, "获取设备句柄失败");
+        ESP_LOGE(TAG, "显示屏初始化失败");
         return;
     }
     

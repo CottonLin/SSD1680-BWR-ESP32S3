@@ -1,15 +1,8 @@
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c: In function 'basic_test':
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:34:11: error: implicit declaration of function 'epd_get_handle' [-Wimplicit-function-declaration]
-   34 |     epd = epd_get_handle();
-      |           ^~~~~~~~~~~~~~
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:34:9: error: assignment to 'epd_handle_t *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-   34 |     epd = epd_get_handle();
-      |         ^
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c: In function 'app_main':
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:305:9: error: assignment to 'epd_handle_t *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  305 |     epd = epd_get_handle();
-      |         ^
-C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:297:15: warning: unused variable 'ret' [-Wunused-variable]
-  297 |     esp_err_t ret;
-      |               ^~~
-[1060/1070] Performing configure step for 'bootloader'
+I (243) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (250) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (257) main_task: Started on CPU0
+I (277) main_task: Calling app_main()
+I (277) MAIN: SSD1680 测试程序启动
+I (277) MAIN: 配置：BASIC=1, GEOMETRY=0, FONT=0
+E (277) MAIN: 获取设备句柄失败
+I (277) main_task: Returned from app_main()
