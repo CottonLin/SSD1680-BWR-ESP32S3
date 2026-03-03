@@ -1,0 +1,47 @@
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c: In function 'epd_get_string_height':
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_gui/src/epd_gui.c:559:21: warning: unused variable 'word_start' [-Wunused-variable]
+  559 |         const char *word_start = p;
+      |                     ^~~~~~~~~~
+
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c: In function 'basic_test':
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:33:5: error: too few arguments to function 'epd_clear'
+   33 |     epd_clear();
+      |     ^~~~~~~~~
+In file included from C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:2:
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:169:11: note: declared here
+  169 | esp_err_t epd_clear(epd_handle_t *handle);
+      |           ^~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:53:17: error: passing argument 1 of 'epd_display' from incompatible pointer type [-Wincompatible-pointer-types]
+   53 |     epd_display(test_buffer_bw, test_buffer_red);
+      |                 ^~~~~~~~~~~~~~
+      |                 |
+      |                 uint8_t * {aka unsigned char *}
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:159:37: note: expected 'epd_handle_t *' but argument is of type 'uint8_t *' {aka 'unsigned char '}
+  159 | esp_err_t epd_display(epd_handle_t *handle,
+      |                       ~~~~~~~~~~~~~~^~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:53:5: error: too few arguments to function 'epd_display'
+   53 |     epd_display(test_buffer_bw, test_buffer_red);
+      |     ^~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:159:11: note: declared here
+  159 | esp_err_t epd_display(epd_handle_t *handle,
+      |           ^~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:58:5: error: too few arguments to function 'epd_clear'
+   58 |     epd_clear();
+      |     ^~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:169:11: note: declared here
+  169 | esp_err_t epd_clear(epd_handle_t *handle);
+      |           ^~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:62:5: error: too few arguments to function 'epd_deep_sleep'
+   62 |     epd_deep_sleep();
+      |     ^~~~~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:185:11: note: declared here
+  185 | esp_err_t epd_deep_sleep(epd_handle_t *handle);
+      |           ^~~~~~~~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c: In function 'app_main':
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/main/main.c:268:11: error: too few arguments to function 'epd_init'
+  268 |     ret = epd_init();
+      |           ^~~~~~~~
+C:/Projects/Espressif_Projects/ESP-Informer/TEST/SSD1680/SSD1680/components/epd_driver/include/epd_driver.h:136:15: note: declared here
+  136 | epd_handle_t* epd_init(const epd_config_t *config);
+      |               ^~~~~~~~
+[1060/1070] Performing configure step for 'bootloader'

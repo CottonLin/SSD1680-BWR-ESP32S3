@@ -25,15 +25,19 @@ static void basic_test(void)
 {
     uint8_t *test_buffer_bw;
     uint8_t *test_buffer_red;
+    epd_handle_t *epd;
+    epd_canvas_t *canvas;
     
     ESP_LOGI(TAG, "=== 开始基础显示测试 ===");
     
-    // 1. 清屏测试
-    ESP_LOGI(TAG, "清屏测试...");
-    epd_clear();
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    // 1. 初始化 EPD 驱动
+    epd = epd_get_handle();
+    if (epd == NULL) {
+        ESP_LOGE(TAG, "获取设备句柄失败");
+        return;
+    }
     
-    // 2. 创建测试图案
+    // 2. 创建画布
     test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
     test_buffer_red = (uint8_t *)malloc(EPD_BUFFER_SIZE);
     
@@ -42,26 +46,42 @@ static void basic_test(void)
         return;
     }
     
-    // 3. 填充测试图案：黑白条纹
+    canvas = epd_canvas_create(test_buffer_bw, test_buffer_red, 296, 152);
+    if (canvas == NULL) {
+        ESP_LOGE(TAG, "创建画布失败");
+        free(test_buffer_bw);
+        free(test_buffer_red);
+        return;
+    }
+    
+    // 3. 清屏测试
+    ESP_LOGI(TAG, "清屏测试...");
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
+    vTaskDelay(pdMS_TO_TICKS(2000));
+    
+    // 4. 填充测试图案：黑白条纹
+    ESP_LOGI(TAG, "显示测试图案...");
     for (int i = 0; i < EPD_BUFFER_SIZE; i++) {
         test_buffer_bw[i] = (i % 2 == 0) ? 0xAA : 0x55;
         test_buffer_red[i] = 0xFF;
     }
     
-    // 4. 显示测试图案
-    ESP_LOGI(TAG, "显示测试图案...");
-    epd_display(test_buffer_bw, test_buffer_red);
+    // 5. 显示测试图案
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
-    // 5. 再次清屏
+    // 6. 再次清屏
     ESP_LOGI(TAG, "再次清屏...");
-    epd_clear();
+    epd_canvas_clear(canvas, EPD_COLOR_WHITE);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     
-    // 6. 进入深度睡眠
+    // 7. 进入深度睡眠
     ESP_LOGI(TAG, "进入深度睡眠模式");
-    epd_deep_sleep();
+    epd_deep_sleep(epd);
     
-    // 释放内存
+    // 释放资源
+    epd_canvas_destroy(canvas);
     free(test_buffer_bw);
     free(test_buffer_red);
     
@@ -78,8 +98,16 @@ static void geometry_test(void)
     epd_canvas_t *canvas;
     uint8_t *test_buffer_bw;
     uint8_t *test_buffer_red;
+    epd_handle_t *epd;
     
     ESP_LOGI(TAG, "=== 开始几何图形绘制测试 ===");
+    
+    // 获取设备句柄
+    epd = epd_get_handle();
+    if (epd == NULL) {
+        ESP_LOGE(TAG, "获取设备句柄失败");
+        return;
+    }
     
     // 创建两个显存缓冲区
     test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
@@ -102,7 +130,7 @@ static void geometry_test(void)
     ESP_LOGI(TAG, "清屏...");
     memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
     memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     
     // 2. 绘制边框矩形（黑色）
     ESP_LOGI(TAG, "绘制边框矩形（黑色）...");
@@ -126,7 +154,7 @@ static void geometry_test(void)
     epd_draw_circle(canvas, 250, 50, 20, EPD_COLOR_RED, 1);
     
     // 刷新显示
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 清理
@@ -148,8 +176,16 @@ static void font_test(void)
     const epd_font_t *font;
     uint8_t *test_buffer_bw;
     uint8_t *test_buffer_red;
+    epd_handle_t *epd;
     
     ESP_LOGI(TAG, "=== 开始字体显示测试 ===");
+    
+    // 获取设备句柄
+    epd = epd_get_handle();
+    if (epd == NULL) {
+        ESP_LOGE(TAG, "获取设备句柄失败");
+        return;
+    }
     
     // 创建两个显存缓冲区
     test_buffer_bw = (uint8_t *)malloc(EPD_BUFFER_SIZE);
@@ -172,7 +208,7 @@ static void font_test(void)
     ESP_LOGI(TAG, "清屏...");
     memset(test_buffer_bw, 0xFF, EPD_BUFFER_SIZE);
     memset(test_buffer_red, 0xFF, EPD_BUFFER_SIZE);
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     
     // 2. 显示不同字号的字体
     ESP_LOGI(TAG, "显示不同字号字体...");
@@ -208,7 +244,7 @@ static void font_test(void)
     }
     
     // 刷新显示
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 测试自动换行功能
@@ -228,7 +264,7 @@ static void font_test(void)
     }
     
     // 刷新显示
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 测试 2: 使用 6x8 字体显示多段落文本
@@ -244,7 +280,7 @@ static void font_test(void)
     }
     
     // 刷新显示
-    epd_display(test_buffer_bw, test_buffer_red);
+    epd_display(epd, test_buffer_bw, test_buffer_red);
     vTaskDelay(pdMS_TO_TICKS(5000));
     
     // 清理
@@ -259,15 +295,16 @@ static void font_test(void)
 void app_main(void)
 {
     esp_err_t ret;
+    epd_handle_t *epd;
     
     ESP_LOGI(TAG, "SSD1680 测试程序启动");
     ESP_LOGI(TAG, "配置：BASIC=%d, GEOMETRY=%d, FONT=%d", 
              ENABLE_BASIC_TEST, ENABLE_GEOMETRY_TEST, ENABLE_FONT_TEST);
     
-    // 1. 初始化显示屏
-    ret = epd_init();
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "显示屏初始化失败");
+    // 1. 初始化显示屏（epd_init 会在内部自动初始化）
+    epd = epd_get_handle();
+    if (epd == NULL) {
+        ESP_LOGE(TAG, "获取设备句柄失败");
         return;
     }
     

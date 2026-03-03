@@ -556,7 +556,6 @@ uint16_t epd_get_string_height(const char *str, const epd_font_t *font, uint16_t
         }
         
         uint16_t word_width = 0;
-        const char *word_start = p;
         while (*p != '\0' && *p != ' ' && *p != '\n') {
             word_width += font->width + char_spacing;
             p++;
