@@ -23,11 +23,11 @@ static inline void coordinate_transform(epd_canvas_t *canvas,
     }
     
     // 用户坐标 (x,y) -> SSD1680 内部坐标
-    // 用户 X (水平 0-295) -> 内部 Y (行号 0-295)
-    // 用户 Y (垂直 0-151) -> 内部 X (列位 0-151)
-    // SSD1680 物理方向与用户坐标系一致，不需要反转
+    // 用户 X(0-295) -> 内部 Y(0-295)
+    // 用户 Y(0-151) -> 内部 X(0-151)
+    // SSD1680 物理方向：Y 轴从下到上，与用户坐标系相反，需要反转
     *internal_x = user_y;
-    *internal_y = user_x;
+    *internal_y = (canvas->internal_height - 1) - user_x;
 }
 
 /**
