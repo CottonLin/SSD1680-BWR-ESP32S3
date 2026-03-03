@@ -49,7 +49,7 @@
 
 ### 必需硬件
 - **开发板**: ESP32-S3 开发板
-- **显示屏**: SSD1680 驱动 IC 的 2.13 英寸三色电子纸显示屏 (296×152 分辨率)
+- **显示屏**: SSD1680 驱动 IC 的 2.66 英寸三色电子纸显示屏 (296×152 分辨率)
 
 ### 引脚连接
 
@@ -393,14 +393,12 @@ epd_show_string(canvas, 10, 100, "Line 1\nLine 2", font, EPD_COLOR_BLACK);
    
    编辑 `components/epd_font/src/epd_font_data.c`
 
-2. **从原 STM32 项目复制字模数据**
-   
-   从原项目的 `EPD_Font.h` 文件中复制字模数组：
+2. **从取模软件复制字模数据**
 
 ```c
 // 示例：复制 8×16 字体数据
 const unsigned char g_font_8x16_data[95][16] = {
-    /* 从原 STM32 项目的 asc2_1608 数组复制 */
+    /* 从取模软件复制 */
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},  // 空格 (0x20)
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -484,7 +482,7 @@ idf.py -p COM3 flash monitor --test-filter "epd_font"
 
 ### Q1: 编译时提示缺少字体数据符号
 
-**A**: 需要导入字体数据。请参考 [字体数据导入](#-字体数据导入) 章节，从原 STM32 项目复制字模数据到 `components/epd_font/src/epd_font_data.c`。
+**A**: 需要导入字体数据。请参考 [字体数据导入](#-字体数据导入) 章节。
 
 ### Q2: 显示内容位置颠倒
 
@@ -492,7 +490,7 @@ idf.py -p COM3 flash monitor --test-filter "epd_font"
 
 ### Q3: 字符之间出现黑线
 
-**A**: 字符间距过小导致。已在 `epd_show_string()` 函数中增加 1 像素间距（`offset_x += font->width + 1`）。
+**A**: 字符间距过小导致。已在 `epd_show_string()` 函数中增加像素间距，至少为 1 （`offset_x += font->width + 1`）。
 
 ### Q4: 红色显示异常
 
@@ -508,7 +506,7 @@ canvas = epd_canvas_create(buffer_bw, NULL, 296, 152);
 
 ### Q6: 支持局部刷新吗？
 
-**A**: 不支持。SSD1680 硬件不支持局部刷新，每次刷新都需要全屏更新（约 30 秒）。
+**A**: 不支持。SSD1680 三色墨水屏硬件不支持局部刷新，每次刷新都需要全屏更新（约 30 秒）。
 
 ---
 
