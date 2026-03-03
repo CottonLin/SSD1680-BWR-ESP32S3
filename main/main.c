@@ -133,7 +133,7 @@ static void geometry_test(void)
     
     // 5. 绘制空心圆（黑色）
     ESP_LOGI(TAG, "绘制空心圆（黑色）...");
-    epd_draw_circle(canvas, 200, 50, 30, EPD_COLOR_BLACK, 0);
+    epd_draw_circle(canvas, 150, 50, 30, EPD_COLOR_BLACK, 0);
     
     // 6. 绘制实心圆（红色）
     ESP_LOGI(TAG, "绘制实心圆（红色）...");
