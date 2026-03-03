@@ -395,6 +395,9 @@ epd_handle_t* epd_init(const epd_config_t *config)
     
     handle->initialized = true;
     
+    // 保存全局句柄（供 epd_get_handle() 使用）
+    g_epd_legacy = handle;
+    
     ESP_LOGI(TAG, "SSD1680 初始化完成");
     return handle;
 }

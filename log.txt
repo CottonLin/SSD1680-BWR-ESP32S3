@@ -1,8 +1,12 @@
-I (243) sleep_gpio: Configure to isolate all GPIO pins in sleep state
-I (250) sleep_gpio: Enable automatic switching of GPIO sleep configuration
-I (257) main_task: Started on CPU0
-I (277) main_task: Calling app_main()
-I (277) MAIN: SSD1680 测试程序启动
-I (277) MAIN: 配置：BASIC=1, GEOMETRY=0, FONT=0
-E (277) MAIN: 获取设备句柄失败
-I (277) main_task: Returned from app_main()
+I (282) MAIN: 配置：BASIC=1, GEOMETRY=0, FONT=0
+I (282) MAIN: 初始化显示屏...
+I (282) EPD_DRIVER: 初始化 SSD1680 显示屏
+I (292) EPD_DRIVER: SPI 初始化完成 (频率：8000000 Hz)
+I (292) EPD_DRIVER: 显存分配完成 (5624 字节)
+I (412) EPD_DRIVER: 硬件复位完成
+I (412) EPD_DRIVER: SSD1680 初始化完成
+I (412) MAIN: 显示屏初始化成功
+I (412) MAIN: === 开始基础显示测试 ===
+E (412) MAIN: 获取设备句柄失败
+I (412) MAIN: 程序结束
+I (412) main_task: Returned from app_main()
