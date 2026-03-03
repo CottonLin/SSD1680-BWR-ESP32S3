@@ -128,7 +128,7 @@ SSD1680/
 
 ```bash
 git clone <repository-url>
-cd SSD1680
+cd SSD1680-BWR-ESP32S3
 ```
 
 ### 3. 配置项目
