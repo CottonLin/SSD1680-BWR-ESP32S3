@@ -7,12 +7,20 @@
 
 ## 问题描述
 
-在 ESP-IDF v5.5 环境下编译项目时，出现以下错误：
+在 ESP-IDF v5.5 环境下编译项目时，遇到以下错误：
 
+### 错误 1: esp_log 依赖
 ```
 CMake Error at build.cmake:328 (message):
   Failed to resolve component 'esp_log' required by component 'epd_driver':
   unknown name.
+```
+
+### 错误 2: PRIVACY_REQUIRES 已弃用
+```
+CMake Error at build.cmake:328 (message):
+  Failed to resolve component 'PRIVACY_REQUIRES' required by component
+  'epd_tests': unknown name.
 ```
 
 ---
@@ -44,9 +52,7 @@ idf_component_register(
 
 ## 修复方案
 
-### 方案 1：直接移除（推荐）
-
-由于 `esp_log` 会通过其他依赖（如 `driver`）自动包含，直接移除即可：
+### 错误 1: 移除 esp_log 依赖
 
 **修复前**:
 ```cmake
@@ -63,6 +69,29 @@ idf_component_register(
     SRCS "src/epd_driver.c"
     INCLUDE_DIRS "include"
     REQUIRES driver            # ✅ 正确
+)
+```
+
+### 错误 2: 移除 PRIVACY_REQUIRES
+
+在 ESP-IDF v5.5 中，`PRIVACY_REQUIRES` 已被弃用，所有依赖都应使用 `REQUIRES`。
+
+**修复前**:
+```cmake
+idf_component_register(
+    SRCS "src/epd_tests.c"
+    INCLUDE_DIRS "."
+    REQUIRES epd_driver epd_gui epd_font unity
+    PRIVACY_REQUIRES esp_timer    # ❌ 已弃用
+)
+```
+
+**修复后**:
+```cmake
+idf_component_register(
+    SRCS "src/epd_tests.c"
+    INCLUDE_DIRS "."
+    REQUIRES epd_driver epd_gui epd_font unity esp_timer    # ✅ 正确
 )
 ```
 
@@ -151,8 +180,8 @@ idf_component_register(
 idf_component_register(
     SRCS "src/epd_tests.c"
     INCLUDE_DIRS "."
-    REQUIRES epd_driver epd_gui epd_font unity esp_log
-    PRIVACY_REQUIRES esp_timer
+    REQUIRES epd_driver epd_gui epd_font unity
+    PRIVACY_REQUIRES esp_timer    # ❌ 已弃用
 )
 ```
 
@@ -161,8 +190,7 @@ idf_component_register(
 idf_component_register(
     SRCS "src/epd_tests.c"
     INCLUDE_DIRS "."
-    REQUIRES epd_driver epd_gui epd_font unity
-    PRIVACY_REQUIRES esp_timer
+    REQUIRES epd_driver epd_gui epd_font unity esp_timer    # ✅ 正确
 )
 ```
 
@@ -263,16 +291,29 @@ REQUIRES driver esp_timer
 REQUIRES driver esp_timer esp_common esp_log freertos
 ```
 
-### 2. 使用 PRIVACY_REQUIRES
+### PRIVACY_REQUIRES 已弃用
 
-对于仅在组件内部使用的依赖：
+**ESP-IDF v5.5 变更**:
+- `PRIVACY_REQUIRES` 已被移除
+- 所有依赖都应使用 `REQUIRES` 声明
+- 不再区分公共依赖和私有依赖
 
+**原因**:
+- 简化 CMake 语法
+- 减少混淆
+- 统一依赖管理
+
+**迁移方法**:
 ```cmake
+# ESP-IDF v5.4 及更早版本 ✅
 idf_component_register(
-    SRCS "src/my_component.c"
-    INCLUDE_DIRS "include"
-    REQUIRES driver              # 公共依赖
-    PRIVACY_REQUIRES esp_timer   # 私有依赖
+    REQUIRES driver
+    PRIVACY_REQUIRES esp_timer
+)
+
+# ESP-IDF v5.5 ✅
+idf_component_register(
+    REQUIRES driver esp_timer
 )
 ```
 
@@ -322,6 +363,15 @@ A:
 ## Git 提交
 
 ```
+Commit: 9b9bf01
+Message: Fix-PRIVACY_REQUIRES
+Date: 2026-03-03
+
+Changes:
+  - 1 file changed
+  - 1 insertion(+), 2 deletions(-)
+  - 移除 PRIVACY_REQUIRES，合并到 REQUIRES
+
 Commit: 7fc6df7
 Message: Fix-CMake-esp_log-dep
 Date: 2026-03-03
@@ -338,15 +388,17 @@ Changes:
 
 ### 问题
 - ❌ 错误地将 `esp_log` 声明为独立组件
+- ❌ 使用已弃用的 `PRIVACY_REQUIRES`
 - ❌ ESP-IDF v5.5 严格检查导致编译失败
 
 ### 解决
 - ✅ 移除所有 `esp_log` 依赖声明
-- ✅ 依靠传递依赖自动包含 `esp_log`
+- ✅ 移除 `PRIVACY_REQUIRES`，合并到 `REQUIRES`
+- ✅ 依靠传递依赖自动包含必要组件
 
 ### 结果
 - ✅ 编译成功
-- ✅ 日志功能正常
+- ✅ 兼容 ESP-IDF v5.5
 - ✅ 依赖关系更清晰
 
 ---
